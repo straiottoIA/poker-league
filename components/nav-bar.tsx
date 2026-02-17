@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 const links = [
   { href: "/seasons", label: "Seasons" },
@@ -11,6 +13,30 @@ const links = [
 
 export function NavBar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setIsLoggedIn(!!user);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session?.user);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    setIsLoggedIn(false);
+    router.refresh();
+  };
 
   return (
     <nav className="border-b border-gray-200 bg-white">
@@ -19,7 +45,7 @@ export function NavBar() {
           <Link href="/" className="text-lg font-bold text-gray-900">
             TTPF
           </Link>
-          <div className="flex gap-4">
+          <div className="flex flex-1 gap-4">
             {links.map((link) => (
               <Link
                 key={link.href}
@@ -33,6 +59,23 @@ export function NavBar() {
                 {link.label}
               </Link>
             ))}
+          </div>
+          <div>
+            {isLoggedIn ? (
+              <button
+                onClick={handleLogout}
+                className="text-sm font-medium text-gray-600 hover:text-gray-900"
+              >
+                Logout
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                className="text-sm font-medium text-gray-600 hover:text-gray-900"
+              >
+                Login
+              </Link>
+            )}
           </div>
         </div>
       </div>

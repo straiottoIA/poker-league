@@ -5,12 +5,15 @@ import { createClient } from "@/lib/supabase/client";
 import { createPlayer, deletePlayer } from "@/lib/queries/players";
 import { useRouter } from "next/navigation";
 import { Player } from "@/lib/supabase/types";
+import { useAuth } from "@/lib/supabase/use-auth";
+import Link from "next/link";
 
 export function PlayerList({ initialPlayers }: { initialPlayers: Player[] }) {
   const [players, setPlayers] = useState(initialPlayers);
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { isLoggedIn } = useAuth();
 
   const handleAdd = async () => {
     if (!name.trim()) return;
@@ -36,25 +39,31 @@ export function PlayerList({ initialPlayers }: { initialPlayers: Player[] }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-2">
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleAdd()}
-          placeholder="Player name"
-          className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm"
-        />
-        <button
-          onClick={handleAdd}
-          disabled={loading || !name.trim()}
-          className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-        >
-          Add
-        </button>
-      </div>
+      {isLoggedIn ? (
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+            placeholder="Player name"
+            className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm"
+          />
+          <button
+            onClick={handleAdd}
+            disabled={loading || !name.trim()}
+            className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+          >
+            Add
+          </button>
+        </div>
+      ) : (
+        <p className="text-sm text-gray-500">
+          <Link href="/login" className="text-blue-600 hover:underline">Login</Link> to manage players.
+        </p>
+      )}
       {players.length === 0 ? (
-        <p className="text-gray-500 text-sm">No players yet. Add one above.</p>
+        <p className="text-gray-500 text-sm">No players yet.</p>
       ) : (
         <ul className="divide-y divide-gray-200 rounded-lg border border-gray-200">
           {players.map((player) => (
@@ -65,12 +74,14 @@ export function PlayerList({ initialPlayers }: { initialPlayers: Player[] }) {
               <span className="text-sm font-medium text-gray-900">
                 {player.name}
               </span>
-              <button
-                onClick={() => handleDelete(player.id)}
-                className="text-sm text-red-600 hover:text-red-800"
-              >
-                Delete
-              </button>
+              {isLoggedIn && (
+                <button
+                  onClick={() => handleDelete(player.id)}
+                  className="text-sm text-red-600 hover:text-red-800"
+                >
+                  Delete
+                </button>
+              )}
             </li>
           ))}
         </ul>

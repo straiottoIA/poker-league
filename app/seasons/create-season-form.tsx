@@ -4,12 +4,15 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { createSeason } from "@/lib/queries/seasons";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/supabase/use-auth";
+import Link from "next/link";
 
 export function CreateSeasonForm() {
   const [name, setName] = useState("");
   const [numWeeks, setNumWeeks] = useState(10);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { isLoggedIn } = useAuth();
 
   const handleCreate = async () => {
     if (!name.trim()) return;
@@ -24,6 +27,14 @@ export function CreateSeasonForm() {
       setLoading(false);
     }
   };
+
+  if (!isLoggedIn) {
+    return (
+      <p className="text-sm text-gray-500">
+        <Link href="/login" className="text-blue-600 hover:underline">Login</Link> to create a season.
+      </p>
+    );
+  }
 
   return (
     <div className="flex gap-2">

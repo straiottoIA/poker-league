@@ -4,6 +4,8 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { upsertScores } from "@/lib/queries/scores";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/supabase/use-auth";
+import Link from "next/link";
 
 interface PlayerScore {
   player_id: string;
@@ -25,6 +27,7 @@ export function AttendanceScoreForm({
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const router = useRouter();
+  const { isLoggedIn } = useAuth();
 
   const updateScore = (index: number, field: keyof PlayerScore, value: unknown) => {
     setScores((prev) => {
@@ -90,6 +93,7 @@ export function AttendanceScoreForm({
                     type="checkbox"
                     checked={score.attended}
                     onChange={(e) => updateScore(i, "attended", e.target.checked)}
+                    disabled={!isLoggedIn}
                     className="h-4 w-4 rounded border-gray-300 text-blue-600"
                   />
                 </td>
@@ -100,6 +104,7 @@ export function AttendanceScoreForm({
                     onChange={(e) =>
                       updateScore(i, "points", Number(e.target.value) || 0)
                     }
+                    disabled={!isLoggedIn}
                     className="w-20 rounded border border-gray-300 px-2 py-1 text-center text-sm"
                   />
                 </td>
@@ -108,24 +113,30 @@ export function AttendanceScoreForm({
           </tbody>
         </table>
       </div>
-      <div className="flex items-center gap-4">
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-        >
-          {saving ? "Saving..." : "Save Scores"}
-        </button>
-        {message && (
-          <span
-            className={`text-sm ${
-              message.startsWith("Error") ? "text-red-600" : "text-green-600"
-            }`}
+      {isLoggedIn ? (
+        <div className="flex items-center gap-4">
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
           >
-            {message}
-          </span>
-        )}
-      </div>
+            {saving ? "Saving..." : "Save Scores"}
+          </button>
+          {message && (
+            <span
+              className={`text-sm ${
+                message.startsWith("Error") ? "text-red-600" : "text-green-600"
+              }`}
+            >
+              {message}
+            </span>
+          )}
+        </div>
+      ) : (
+        <p className="text-sm text-gray-500">
+          <Link href="/login" className="text-blue-600 hover:underline">Login</Link> to edit scores.
+        </p>
+      )}
     </div>
   );
 }

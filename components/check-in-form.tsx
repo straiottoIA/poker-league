@@ -4,6 +4,8 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { checkInPlayer } from "@/lib/queries/checkin";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/supabase/use-auth";
+import Link from "next/link";
 
 interface Player {
   id: string;
@@ -28,6 +30,7 @@ export function CheckInForm({
   );
   const [loading, setLoading] = useState<string | null>(null);
   const router = useRouter();
+  const { isLoggedIn } = useAuth();
 
   const handleCheckIn = async (playerId: string) => {
     setLoading(playerId);
@@ -78,7 +81,7 @@ export function CheckInForm({
                       <span className="inline-flex items-center text-green-600 text-sm font-medium">
                         &#10003; Checked in
                       </span>
-                    ) : (
+                    ) : isLoggedIn ? (
                       <button
                         onClick={() => handleCheckIn(player.id)}
                         disabled={isLoading}
@@ -86,6 +89,8 @@ export function CheckInForm({
                       >
                         {isLoading ? "..." : "Check In"}
                       </button>
+                    ) : (
+                      <span className="text-xs text-gray-400">-</span>
                     )}
                   </td>
                 </tr>
@@ -94,6 +99,11 @@ export function CheckInForm({
           </tbody>
         </table>
       </div>
+      {!isLoggedIn && (
+        <p className="text-sm text-gray-500">
+          <Link href="/login" className="text-blue-600 hover:underline">Login</Link> to check in players.
+        </p>
+      )}
     </div>
   );
 }
