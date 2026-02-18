@@ -4,6 +4,7 @@ import { getSeasonPlayers } from "@/lib/queries/roster";
 import { getWeekScores } from "@/lib/queries/scores";
 import { AttendanceScoreForm } from "@/components/attendance-score-form";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 export default async function WeekPage({
   params,
@@ -12,6 +13,11 @@ export default async function WeekPage({
 }) {
   const { seasonId, weekNum } = await params;
   const weekNumber = parseInt(weekNum, 10);
+
+  if (isNaN(weekNumber) || weekNumber < 1) {
+    notFound();
+  }
+
   const supabase = await createClient();
 
   const [season, players, existingScores] = await Promise.all([
@@ -19,6 +25,10 @@ export default async function WeekPage({
     getSeasonPlayers(supabase, seasonId),
     getWeekScores(supabase, seasonId, weekNumber),
   ]);
+
+  if (weekNumber > season.num_weeks) {
+    notFound();
+  }
 
   const existingMap = new Map(
     existingScores.map((s) => [s.player_id, s])

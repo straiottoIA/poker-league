@@ -19,7 +19,8 @@ export function CreateSeasonForm() {
     setLoading(true);
     try {
       const supabase = createClient();
-      const season = await createSeason(supabase, name.trim(), numWeeks);
+      const safeWeeks = Math.max(1, Math.min(52, numWeeks));
+      const season = await createSeason(supabase, name.trim(), safeWeeks);
       setName("");
       router.push(`/seasons/${season.id}`);
       router.refresh();

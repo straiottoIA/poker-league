@@ -53,7 +53,11 @@ export function SeasonGrid({
         </thead>
         <tbody className="divide-y divide-gray-200 bg-white">
           {players.map((player) => {
-            let total = 0;
+            const total = weeks.reduce((sum, w) => {
+              const score = scoreMap.get(`${player.id}-${w}`);
+              return sum + (score ? Number(score.points) : 0);
+            }, 0);
+
             return (
               <tr key={player.id}>
                 <td className="sticky left-0 z-10 bg-white whitespace-nowrap px-4 py-2 text-sm font-medium text-gray-900">
@@ -61,7 +65,6 @@ export function SeasonGrid({
                 </td>
                 {weeks.map((w) => {
                   const score = scoreMap.get(`${player.id}-${w}`);
-                  if (score) total += Number(score.points);
                   return (
                     <td
                       key={w}

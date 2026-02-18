@@ -29,18 +29,20 @@ export function CheckInForm({
     new Set(checkedInPlayerIds)
   );
   const [loading, setLoading] = useState<string | null>(null);
+  const [error, setError] = useState("");
   const router = useRouter();
   const { isLoggedIn } = useAuth();
 
   const handleCheckIn = async (playerId: string) => {
     setLoading(playerId);
+    setError("");
     try {
       const supabase = createClient();
       await checkInPlayer(supabase, seasonId, playerId, weekNumber);
       setCheckedIn((prev) => new Set(prev).add(playerId));
       router.refresh();
-    } catch {
-      // silently fail — state stays unchanged
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao fazer check-in. Tente novamente.");
     } finally {
       setLoading(null);
     }
@@ -99,6 +101,9 @@ export function CheckInForm({
           </tbody>
         </table>
       </div>
+      {error && (
+        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>
+      )}
       {!isLoggedIn && (
         <p className="text-sm text-gray-500">
           <Link href="/login" className="text-blue-600 hover:underline">Login</Link> to check in players.

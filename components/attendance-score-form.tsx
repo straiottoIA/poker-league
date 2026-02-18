@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { upsertScores } from "@/lib/queries/scores";
 import { useRouter } from "next/navigation";
@@ -28,6 +28,12 @@ export function AttendanceScoreForm({
   const [message, setMessage] = useState("");
   const router = useRouter();
   const { isLoggedIn } = useAuth();
+
+  useEffect(() => {
+    if (!message) return;
+    const timer = setTimeout(() => setMessage(""), 3000);
+    return () => clearTimeout(timer);
+  }, [message]);
 
   const updateScore = (index: number, field: keyof PlayerScore, value: unknown) => {
     setScores((prev) => {
@@ -94,6 +100,7 @@ export function AttendanceScoreForm({
                     checked={score.attended}
                     onChange={(e) => updateScore(i, "attended", e.target.checked)}
                     disabled={!isLoggedIn}
+                    aria-label={`Presença de ${score.player_name}`}
                     className="h-4 w-4 rounded border-gray-300 text-blue-600"
                   />
                 </td>
@@ -105,6 +112,9 @@ export function AttendanceScoreForm({
                       updateScore(i, "points", Number(e.target.value) || 0)
                     }
                     disabled={!isLoggedIn}
+                    min={0}
+                    max={9999}
+                    aria-label={`Pontos de ${score.player_name}`}
                     className="w-20 rounded border border-gray-300 px-2 py-1 text-center text-sm"
                   />
                 </td>

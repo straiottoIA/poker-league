@@ -9,10 +9,18 @@ export function useAuth() {
 
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setIsLoggedIn(!!user);
-      setLoading(false);
-    });
+
+    supabase.auth
+      .getUser()
+      .then(({ data: { user } }) => {
+        setIsLoggedIn(!!user);
+      })
+      .catch(() => {
+        setIsLoggedIn(false);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
 
     const {
       data: { subscription },

@@ -2,39 +2,24 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useAuth } from "@/lib/supabase/use-auth";
 
 const links = [
   { href: "/seasons", label: "Seasons" },
   { href: "/players", label: "Players" },
   { href: "/check-in", label: "Check-in" },
+  { href: "/estatisticas", label: "Estatísticas" },
 ];
 
 export function NavBar() {
   const pathname = usePathname();
   const router = useRouter();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setIsLoggedIn(!!user);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsLoggedIn(!!session?.user);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  const { isLoggedIn } = useAuth();
 
   const handleLogout = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
-    setIsLoggedIn(false);
     router.refresh();
   };
 
@@ -46,28 +31,45 @@ export function NavBar() {
             TTPF
           </Link>
           <div className="flex flex-1 gap-4">
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`text-sm font-medium transition-colors ${
-                  pathname.startsWith(link.href)
-                    ? "text-blue-600"
-                    : "text-gray-600 hover:text-gray-900"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {links.map((link) => {
+              const isActive = pathname.startsWith(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`text-sm font-medium transition-colors ${
+                    isActive
+                      ? "text-blue-600"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </div>
           <div>
             {isLoggedIn ? (
-              <button
-                onClick={handleLogout}
-                className="text-sm font-medium text-gray-600 hover:text-gray-900"
-              >
-                Logout
-              </button>
+              <div className="flex items-center gap-4">
+                <Link
+                  href="/perfil"
+                  aria-current={pathname === "/perfil" ? "page" : undefined}
+                  className={`text-sm font-medium transition-colors ${
+                    pathname === "/perfil"
+                      ? "text-blue-600"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  Perfil
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="text-sm font-medium text-gray-600 hover:text-gray-900"
+                >
+                  Logout
+                </button>
+              </div>
             ) : (
               <Link
                 href="/login"

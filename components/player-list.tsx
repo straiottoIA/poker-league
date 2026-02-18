@@ -6,39 +6,63 @@ import { createPlayer, deletePlayer } from "@/lib/queries/players";
 import { useRouter } from "next/navigation";
 import { Player } from "@/lib/supabase/types";
 import { useAuth } from "@/lib/supabase/use-auth";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import Link from "next/link";
 
 export function PlayerList({ initialPlayers }: { initialPlayers: Player[] }) {
   const [players, setPlayers] = useState(initialPlayers);
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const router = useRouter();
   const { isLoggedIn } = useAuth();
 
   const handleAdd = async () => {
     if (!name.trim()) return;
     setLoading(true);
+    setError("");
     try {
       const supabase = createClient();
       const player = await createPlayer(supabase, name.trim());
       setPlayers((prev) => [...prev, player].sort((a, b) => a.name.localeCompare(b.name)));
       setName("");
       router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao adicionar jogador.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Delete this player? This will remove them from all seasons.")) return;
-    const supabase = createClient();
-    await deletePlayer(supabase, id);
-    setPlayers((prev) => prev.filter((p) => p.id !== id));
-    router.refresh();
+  const handleDeleteConfirmed = async () => {
+    if (!pendingDeleteId) return;
+    const id = pendingDeleteId;
+    setPendingDeleteId(null);
+    setError("");
+    try {
+      const supabase = createClient();
+      await deletePlayer(supabase, id);
+      setPlayers((prev) => prev.filter((p) => p.id !== id));
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao deletar jogador.");
+    }
   };
+
+  const pendingPlayerName = players.find((p) => p.id === pendingDeleteId)?.name ?? "";
 
   return (
     <div className="space-y-4">
+      <ConfirmDialog
+        open={!!pendingDeleteId}
+        title="Deletar jogador"
+        message={`Tem certeza que deseja deletar "${pendingPlayerName}"? Isso vai removê-lo de todas as temporadas.`}
+        confirmLabel="Deletar"
+        onConfirm={handleDeleteConfirmed}
+        onCancel={() => setPendingDeleteId(null)}
+      />
+
       {isLoggedIn ? (
         <div className="flex gap-2">
           <input
@@ -62,6 +86,11 @@ export function PlayerList({ initialPlayers }: { initialPlayers: Player[] }) {
           <Link href="/login" className="text-blue-600 hover:underline">Login</Link> to manage players.
         </p>
       )}
+
+      {error && (
+        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>
+      )}
+
       {players.length === 0 ? (
         <p className="text-gray-500 text-sm">No players yet.</p>
       ) : (
@@ -76,7 +105,7 @@ export function PlayerList({ initialPlayers }: { initialPlayers: Player[] }) {
               </span>
               {isLoggedIn && (
                 <button
-                  onClick={() => handleDelete(player.id)}
+                  onClick={() => setPendingDeleteId(player.id)}
                   className="text-sm text-red-600 hover:text-red-800"
                 >
                   Delete

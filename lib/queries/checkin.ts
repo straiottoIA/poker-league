@@ -1,5 +1,10 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 
+type RawCheckinRow = {
+  player_id: string;
+  players: { name: string } | null;
+};
+
 export async function getCurrentWeek(
   supabase: SupabaseClient,
   seasonId: string,
@@ -56,8 +61,12 @@ export async function getCheckedInPlayers(
     .eq("week_number", weekNumber)
     .eq("attended", true);
   if (error) throw error;
-  return (data ?? []).map((row: Record<string, unknown>) => ({
-    player_id: row.player_id as string,
-    player_name: (row.players as { name: string }).name,
-  }));
+
+  return (data as RawCheckinRow[]).map((row) => {
+    if (!row.players) throw new Error(`Dados do jogador ausentes no check-in para player_id ${row.player_id}`);
+    return {
+      player_id: row.player_id,
+      player_name: row.players.name,
+    };
+  });
 }

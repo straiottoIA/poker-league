@@ -1,6 +1,11 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Player } from "@/lib/supabase/types";
 
+type RawSeasonPlayer = {
+  player_id: string;
+  players: { id: string; name: string; created_at: string } | null;
+};
+
 export async function getSeasonPlayers(
   supabase: SupabaseClient,
   seasonId: string
@@ -10,9 +15,13 @@ export async function getSeasonPlayers(
     .select("player_id, players(id, name, created_at)")
     .eq("season_id", seasonId);
   if (error) throw error;
-  return (data ?? []).map((sp: Record<string, unknown>) => sp.players as unknown as Player).sort((a, b) =>
-    a.name.localeCompare(b.name)
-  );
+
+  return (data as RawSeasonPlayer[])
+    .map((sp) => {
+      if (!sp.players) throw new Error(`Dados do jogador ausentes para season_player ${sp.player_id}`);
+      return sp.players;
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export async function getEnrolledPlayerIds(

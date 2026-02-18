@@ -20,10 +20,12 @@ export function RosterManager({
     new Set(initialEnrolledIds)
   );
   const [loading, setLoading] = useState<string | null>(null);
+  const [error, setError] = useState("");
   const { isLoggedIn } = useAuth();
 
   const handleToggle = async (playerId: string) => {
     setLoading(playerId);
+    setError("");
     const supabase = createClient();
     const isEnrolled = enrolledIds.has(playerId);
 
@@ -40,7 +42,7 @@ export function RosterManager({
         setEnrolledIds((prev) => new Set(prev).add(playerId));
       }
     } catch (err) {
-      alert(`Error: ${err instanceof Error ? err.message : "Unknown error"}`);
+      setError(err instanceof Error ? err.message : "Erro ao atualizar roster. Tente novamente.");
     } finally {
       setLoading(null);
     }
@@ -48,21 +50,28 @@ export function RosterManager({
 
   return (
     <div className="space-y-4">
+      {error && (
+        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>
+      )}
       <ul className="divide-y divide-gray-200 rounded-lg border border-gray-200">
         {allPlayers.map((player) => (
           <li key={player.id} className="flex items-center gap-3 px-4 py-3">
             <input
+              id={`roster-${player.id}`}
               type="checkbox"
               checked={enrolledIds.has(player.id)}
               onChange={() => handleToggle(player.id)}
               disabled={!isLoggedIn || loading === player.id}
               className="h-4 w-4 rounded border-gray-300 text-blue-600"
             />
-            <span className="text-sm font-medium text-gray-900">
+            <label
+              htmlFor={`roster-${player.id}`}
+              className="text-sm font-medium text-gray-900 cursor-pointer"
+            >
               {player.name}
-            </span>
+            </label>
             {loading === player.id && (
-              <span className="text-xs text-gray-400">saving...</span>
+              <span className="text-xs text-gray-400">salvando...</span>
             )}
           </li>
         ))}

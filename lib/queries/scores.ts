@@ -1,6 +1,23 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Score, LeaderboardEntry, WeekScore } from "@/lib/supabase/types";
 
+type RawScoreRow = {
+  player_id: string;
+  points: number;
+  attended: boolean;
+  players: { name: string } | null;
+};
+
+type RawFullScoreRow = RawScoreRow & {
+  season_id: string;
+  week_number: number;
+};
+
+function extractPlayerName(row: RawScoreRow, context: string): string {
+  if (!row.players) throw new Error(`Dados do jogador ausentes em ${context} para player_id ${row.player_id}`);
+  return row.players.name;
+}
+
 export async function getWeekScores(
   supabase: SupabaseClient,
   seasonId: string,
@@ -12,11 +29,12 @@ export async function getWeekScores(
     .eq("season_id", seasonId)
     .eq("week_number", weekNumber);
   if (error) throw error;
-  return (data ?? []).map((s: Record<string, unknown>) => ({
-    player_id: s.player_id as string,
-    player_name: (s.players as { name: string }).name,
-    points: s.points as number,
-    attended: s.attended as boolean,
+
+  return (data as RawScoreRow[]).map((s) => ({
+    player_id: s.player_id,
+    player_name: extractPlayerName(s, "getWeekScores"),
+    points: s.points,
+    attended: s.attended,
   }));
 }
 
@@ -57,38 +75,27 @@ export async function getLeaderboard(
     { name: string; totalPoints: number; weeksAttended: number }
   >();
 
-  for (const row of data ?? []) {
-    const r = row as Record<string, unknown>;
-    const pid = r.player_id as string;
-    const name = (r.players as { name: string }).name;
-    const points = Number(r.points);
-    const attended = r.attended as boolean;
-
-    const existing = playerMap.get(pid) ?? {
-      name,
+  for (const row of data as RawScoreRow[]) {
+    const existing = playerMap.get(row.player_id) ?? {
+      name: extractPlayerName(row, "getLeaderboard"),
       totalPoints: 0,
       weeksAttended: 0,
     };
-    existing.totalPoints += points;
-    if (attended) existing.weeksAttended += 1;
-    playerMap.set(pid, existing);
+    existing.totalPoints += row.points;
+    if (row.attended) existing.weeksAttended += 1;
+    playerMap.set(row.player_id, existing);
   }
 
-  const entries: LeaderboardEntry[] = Array.from(playerMap.entries())
-    .map(([pid, info]) => ({
+  return Array.from(playerMap.entries())
+    .map(([pid, info], i) => ({
       player_id: pid,
       player_name: info.name,
       total_points: info.totalPoints,
       weeks_attended: info.weeksAttended,
-      rank: 0,
+      rank: i + 1,
     }))
-    .sort((a, b) => b.total_points - a.total_points);
-
-  entries.forEach((e, i) => {
-    e.rank = i + 1;
-  });
-
-  return entries;
+    .sort((a, b) => b.total_points - a.total_points)
+    .map((e, i) => ({ ...e, rank: i + 1 }));
 }
 
 export async function getAllSeasonScores(
@@ -101,5 +108,5 @@ export async function getAllSeasonScores(
     .eq("season_id", seasonId)
     .order("week_number");
   if (error) throw error;
-  return data ?? [];
+  return (data as Score[]) ?? [];
 }

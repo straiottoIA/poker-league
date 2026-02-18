@@ -30,15 +30,21 @@ export async function createSeason(
   name: string,
   numWeeks: number = 10
 ): Promise<Season> {
-  // Deactivate all other seasons
-  await supabase.from("seasons").update({ is_active: false }).eq("is_active", true);
-
+  // Create new season first — if this fails, nothing changes in the database
   const { data, error } = await supabase
     .from("seasons")
     .insert({ name, num_weeks: numWeeks, is_active: true })
     .select()
     .single();
   if (error) throw error;
+
+  // Only then deactivate other seasons, excluding the one just created
+  await supabase
+    .from("seasons")
+    .update({ is_active: false })
+    .eq("is_active", true)
+    .neq("id", data.id);
+
   return data;
 }
 
