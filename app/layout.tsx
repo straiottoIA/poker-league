@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Libre_Baskerville, DM_Sans } from "next/font/google";
 import { NavBar } from "@/components/nav-bar";
 import { Providers } from "./providers";
+import { PwaRegister } from "@/components/pwa-register";
 import "./globals.css";
 
 const libreBaskerville = Libre_Baskerville({
@@ -22,6 +23,15 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: "TTPF — Tip Total Poker Friends",
   description: "Onde cada mão conta uma história. Brasília, DF — Est. 2010",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "TTPF",
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
 };
 
 export default function RootLayout({
@@ -31,6 +41,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
+      <head>
+        <link rel="apple-touch-icon" href="/icons/icon.svg" />
+        <meta name="theme-color" content="#e53935" />
+      </head>
       <body className={`${libreBaskerville.variable} ${dmSans.variable} min-h-screen bg-canvas text-ink antialiased`}>
         <Providers>
           <NavBar />
@@ -38,6 +52,7 @@ export default function RootLayout({
             {children}
           </main>
         </Providers>
+        <PwaRegister />
       </body>
     </html>
   );
