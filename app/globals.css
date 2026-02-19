@@ -42,6 +42,7 @@
     color: var(--ink);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
   }
 
   input[type="number"]::-webkit-inner-spin-button,
