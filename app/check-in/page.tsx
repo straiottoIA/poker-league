@@ -11,8 +11,13 @@ export default async function CheckInPage() {
   if (!season) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold">Check-in</h1>
-        <p className="text-gray-500 text-sm">No active season. Create a season to get started.</p>
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Check-in</h1>
+          <p className="mt-1 text-sm text-slate-500">Registre a presença dos jogadores.</p>
+        </div>
+        <div className="rounded-xl border border-slate-200 bg-white px-6 py-12 text-center shadow-sm">
+          <p className="text-sm text-slate-400">Nenhuma temporada ativa. Crie uma temporada para começar.</p>
+        </div>
       </div>
     );
   }
@@ -25,7 +30,10 @@ export default async function CheckInPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Check-in</h1>
+      <div>
+        <h1 className="text-2xl font-bold text-slate-900">Check-in</h1>
+        <p className="mt-1 text-sm text-slate-500">Registre a presença dos jogadores.</p>
+      </div>
       <CheckInForm
         seasonId={season.id}
         seasonName={season.name}

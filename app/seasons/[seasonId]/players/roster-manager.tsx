@@ -42,43 +42,68 @@ export function RosterManager({
         setEnrolledIds((prev) => new Set(prev).add(playerId));
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao atualizar roster. Tente novamente.");
+      setError(err instanceof Error ? err.message : "Erro ao atualizar elenco. Tente novamente.");
     } finally {
       setLoading(null);
     }
   };
 
+  const enrolledCount = enrolledIds.size;
+
   return (
     <div className="space-y-4">
       {error && (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>
+        <p className="rounded-lg border border-red-100 bg-red-50 px-4 py-2.5 text-sm text-red-600">{error}</p>
       )}
-      <ul className="divide-y divide-gray-200 rounded-lg border border-gray-200">
-        {allPlayers.map((player) => (
-          <li key={player.id} className="flex items-center gap-3 px-4 py-3">
-            <input
-              id={`roster-${player.id}`}
-              type="checkbox"
-              checked={enrolledIds.has(player.id)}
-              onChange={() => handleToggle(player.id)}
-              disabled={!isLoggedIn || loading === player.id}
-              className="h-4 w-4 rounded border-gray-300 text-blue-600"
-            />
-            <label
-              htmlFor={`roster-${player.id}`}
-              className="text-sm font-medium text-gray-900 cursor-pointer"
-            >
-              {player.name}
-            </label>
-            {loading === player.id && (
-              <span className="text-xs text-gray-400">salvando...</span>
-            )}
-          </li>
-        ))}
-      </ul>
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-slate-500">
+          {enrolledCount} de {allPlayers.length} jogador{allPlayers.length !== 1 ? "es" : ""} inscrito{enrolledCount !== 1 ? "s" : ""}.
+        </p>
+      </div>
+      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <ul className="divide-y divide-slate-100">
+          {allPlayers.map((player) => {
+            const isEnrolled = enrolledIds.has(player.id);
+            const isLoading = loading === player.id;
+            return (
+              <li
+                key={player.id}
+                className={`flex items-center gap-3 px-4 py-3 transition-colors hover:bg-slate-50 ${
+                  isEnrolled ? "bg-indigo-50/40" : ""
+                }`}
+              >
+                <input
+                  id={`roster-${player.id}`}
+                  type="checkbox"
+                  checked={isEnrolled}
+                  onChange={() => handleToggle(player.id)}
+                  disabled={!isLoggedIn || isLoading}
+                  className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                />
+                <label
+                  htmlFor={`roster-${player.id}`}
+                  className={`flex-1 cursor-pointer text-sm font-medium ${
+                    isEnrolled ? "text-slate-900" : "text-slate-600"
+                  }`}
+                >
+                  {player.name}
+                </label>
+                {isLoading && (
+                  <span className="text-xs text-slate-400">salvando...</span>
+                )}
+                {isEnrolled && !isLoading && (
+                  <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-semibold text-indigo-700">
+                    Inscrito
+                  </span>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
       {!isLoggedIn && (
-        <p className="text-sm text-gray-500">
-          <Link href="/login" className="text-blue-600 hover:underline">Login</Link> to manage the roster.
+        <p className="text-sm text-slate-500">
+          <Link href="/login" className="font-medium text-indigo-600 hover:underline">Faça login</Link> para gerenciar o elenco.
         </p>
       )}
     </div>

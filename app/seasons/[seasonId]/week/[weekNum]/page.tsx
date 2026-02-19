@@ -49,20 +49,27 @@ export default async function WeekPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">
-            {season.name} - Week {weekNumber}
+          <div className="flex items-center gap-2 text-sm text-slate-500">
+            <Link href={`/seasons/${seasonId}`} className="hover:text-slate-900 transition-colors">
+              {season.name}
+            </Link>
+            <span>/</span>
+            <span className="font-medium text-slate-900">Semana {weekNumber}</span>
+          </div>
+          <h1 className="mt-1 text-2xl font-bold text-slate-900">
+            Semana {weekNumber}
           </h1>
-          <p className="text-sm text-gray-500">
-            Enter attendance and points for each player
+          <p className="mt-0.5 text-sm text-slate-500">
+            Registre presença e pontuação de cada jogador.
           </p>
         </div>
         <Link
           href={`/seasons/${seasonId}`}
-          className="rounded border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          className="shrink-0 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
         >
-          Back to Dashboard
+          Voltar
         </Link>
       </div>
 
@@ -72,13 +79,16 @@ export default async function WeekPage({
         initialScores={initialScores}
       />
 
-      <div className="flex justify-between">
+      <div className="flex items-center justify-between border-t border-slate-100 pt-4">
         {prevWeek ? (
           <Link
             href={`/seasons/${seasonId}/week/${prevWeek}`}
-            className="text-sm text-blue-600 hover:underline"
+            className="flex items-center gap-1.5 text-sm font-medium text-indigo-600 transition-colors hover:text-indigo-800"
           >
-            &larr; Week {prevWeek}
+            <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clipRule="evenodd" />
+            </svg>
+            Semana {prevWeek}
           </Link>
         ) : (
           <div />
@@ -86,9 +96,12 @@ export default async function WeekPage({
         {nextWeek ? (
           <Link
             href={`/seasons/${seasonId}/week/${nextWeek}`}
-            className="text-sm text-blue-600 hover:underline"
+            className="flex items-center gap-1.5 text-sm font-medium text-indigo-600 transition-colors hover:text-indigo-800"
           >
-            Week {nextWeek} &rarr;
+            Semana {nextWeek}
+            <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
+            </svg>
           </Link>
         ) : (
           <div />

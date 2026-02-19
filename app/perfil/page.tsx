@@ -141,7 +141,7 @@ export default function PerfilPage() {
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-sm text-slate-400">Carregando...</p>
       </div>
     );
   }
@@ -171,29 +171,31 @@ export default function PerfilPage() {
   ];
 
   return (
-    <div className="mx-auto max-w-2xl py-10 px-4">
+    <div className="mx-auto max-w-2xl py-6 px-4">
       {/* Header do perfil */}
       <div className="mb-8 flex items-center gap-5">
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-blue-600 text-2xl font-bold text-white">
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-indigo-600 text-2xl font-bold text-white shadow-sm">
           {initials}
         </div>
         <div>
-          <h1 className="text-xl font-bold text-gray-900">{user.email}</h1>
-          <p className="text-sm text-gray-500">Administrador</p>
+          <h1 className="text-xl font-bold text-slate-900">{user.email}</h1>
+          <span className="mt-1 inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700">
+            Administrador
+          </span>
         </div>
       </div>
 
       {/* Abas */}
-      <div className="mb-6 border-b border-gray-200">
-        <div className="flex gap-1">
+      <div className="mb-6 border-b border-slate-200">
+        <div className="flex gap-0">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`-mb-px border-b-2 px-4 pb-3 text-sm font-medium transition-colors ${
                 activeTab === tab.id
-                  ? "border-blue-600 text-blue-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
+                  ? "border-indigo-600 text-indigo-600"
+                  : "border-transparent text-slate-500 hover:text-slate-700"
               }`}
             >
               {tab.label}
@@ -204,17 +206,17 @@ export default function PerfilPage() {
 
       {/* ── RESUMO ── */}
       {activeTab === "resumo" && (
-        <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+        <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
           <div className="space-y-5">
             <InfoRow label="E-mail" value={user.email ?? "—"} />
             <InfoRow label="Função" value="Administrador" />
             <InfoRow label="Membro desde" value={memberSince} />
             <InfoRow label="Último acesso" value={lastLogin} />
           </div>
-          <div className="mt-8">
+          <div className="mt-8 border-t border-slate-100 pt-6">
             <button
               onClick={handleLogout}
-              className="w-full rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"
+              className="w-full rounded-lg border border-red-100 bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-100"
             >
               Sair da conta
             </button>
@@ -229,34 +231,37 @@ export default function PerfilPage() {
           {!dataLoading && stats && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <StatCard label="Temporadas" value={stats.totalSeasons} />
-                <StatCard label="Jogadores" value={stats.totalPlayers} />
-                <StatCard label="Semanas Registradas" value={stats.totalWeeksPlayed} />
-                <StatCard label="Total de Presenças" value={stats.totalAttendances} />
+                <StatCard label="Temporadas" value={stats.totalSeasons} color="indigo" />
+                <StatCard label="Jogadores" value={stats.totalPlayers} color="violet" />
+                <StatCard label="Semanas Registradas" value={stats.totalWeeksPlayed} color="sky" />
+                <StatCard label="Total de Presenças" value={stats.totalAttendances} color="emerald" />
                 <div className="col-span-2">
                   <StatCard
                     label="Média de Presenças / Semana"
                     value={stats.avgAttendancePerWeek}
                     suffix="jogadores"
+                    color="indigo"
                   />
                 </div>
               </div>
 
               {stats.activeSeason ? (
-                <div className="rounded-xl border border-green-200 bg-green-50 p-5">
-                  <p className="text-xs font-medium uppercase tracking-wide text-green-600">
-                    Temporada Ativa
-                  </p>
-                  <p className="mt-1 text-lg font-bold text-green-800">
-                    {stats.activeSeason.name}
-                  </p>
-                  <p className="text-sm text-green-600">
-                    {stats.activeSeason.num_weeks} semanas no total
-                  </p>
+                <div className="flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50 p-5">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-emerald-600">
+                      Temporada Ativa
+                    </p>
+                    <p className="mt-1 text-lg font-bold text-emerald-900">
+                      {stats.activeSeason.name}
+                    </p>
+                  </div>
+                  <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                    {stats.activeSeason.num_weeks} semanas
+                  </span>
                 </div>
               ) : (
-                <div className="rounded-xl border border-yellow-200 bg-yellow-50 p-5">
-                  <p className="text-sm text-yellow-700">Nenhuma temporada ativa no momento.</p>
+                <div className="rounded-xl border border-amber-200 bg-amber-50 p-5">
+                  <p className="text-sm text-amber-700">Nenhuma temporada ativa no momento.</p>
                 </div>
               )}
             </div>
@@ -269,31 +274,33 @@ export default function PerfilPage() {
         <>
           {dataLoading && <LoadingState />}
           {!dataLoading && attendance && attendance.length === 0 && (
-            <p className="text-center text-gray-400 py-12">Nenhum dado de presença encontrado.</p>
+            <div className="rounded-xl border border-slate-200 bg-white px-6 py-12 text-center shadow-sm">
+              <p className="text-sm text-slate-400">Nenhum dado de presença encontrado.</p>
+            </div>
           )}
           {!dataLoading && attendance && attendance.length > 0 && (
             <div className="space-y-5">
               {attendance.map(({ season, weeks, total }) => (
                 <div
                   key={season.id}
-                  className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
+                  className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
                 >
                   <div className="mb-4 flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-900">{season.name}</h3>
+                    <h3 className="font-semibold text-slate-900">{season.name}</h3>
                     <div className="flex items-center gap-2">
                       {season.is_active && (
-                        <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+                        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700">
                           Ativa
                         </span>
                       )}
-                      <span className="text-xs text-gray-400">
+                      <span className="text-xs font-medium text-slate-400">
                         {total} presenças
                       </span>
                     </div>
                   </div>
 
                   {weeks.length === 0 ? (
-                    <p className="text-sm text-gray-400">Sem presenças registradas.</p>
+                    <p className="text-sm text-slate-400">Sem presenças registradas.</p>
                   ) : (
                     <>
                       <div className="flex flex-wrap gap-2">
@@ -302,35 +309,35 @@ export default function PerfilPage() {
                           const intensity = max > 0 ? count / max : 0;
                           const bg =
                             intensity > 0.75
-                              ? "bg-blue-600 text-white"
+                              ? "bg-indigo-600 text-white"
                               : intensity > 0.5
-                              ? "bg-blue-400 text-white"
+                              ? "bg-indigo-400 text-white"
                               : intensity > 0.25
-                              ? "bg-blue-200 text-blue-800"
-                              : "bg-blue-50 text-blue-600";
+                              ? "bg-indigo-100 text-indigo-800"
+                              : "bg-indigo-50 text-indigo-500";
 
                           return (
                             <div
                               key={weekNumber}
                               className={`flex flex-col items-center rounded-lg px-3 py-2 ${bg}`}
                             >
-                              <span className="text-xs opacity-80">Sem {weekNumber}</span>
+                              <span className="text-xs opacity-75">S{weekNumber}</span>
                               <span className="text-lg font-bold">{count}</span>
                             </div>
                           );
                         })}
                       </div>
-                      <div className="mt-4 flex items-center gap-1.5">
-                        <div className="h-2 w-full rounded-full bg-gray-100">
+                      <div className="mt-4 flex items-center gap-2">
+                        <div className="h-1.5 w-full rounded-full bg-slate-100">
                           <div
-                            className="h-2 rounded-full bg-blue-500 transition-all"
+                            className="h-1.5 rounded-full bg-indigo-500 transition-all"
                             style={{
                               width: `${Math.round((weeks.length / season.num_weeks) * 100)}%`,
                             }}
                           />
                         </div>
-                        <span className="shrink-0 text-xs text-gray-400">
-                          {weeks.length}/{season.num_weeks} sem.
+                        <span className="shrink-0 text-xs font-medium text-slate-400">
+                          {weeks.length}/{season.num_weeks}
                         </span>
                       </div>
                     </>
@@ -348,27 +355,37 @@ export default function PerfilPage() {
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-xs font-medium uppercase tracking-wide text-gray-400">{label}</p>
-      <p className="mt-1 text-base font-medium text-gray-900">{value}</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</p>
+      <p className="mt-1 text-base font-medium text-slate-900">{value}</p>
     </div>
   );
 }
+
+type StatColor = "indigo" | "violet" | "sky" | "emerald";
 
 function StatCard({
   label,
   value,
   suffix,
+  color = "indigo",
 }: {
   label: string;
   value: number;
   suffix?: string;
+  color?: StatColor;
 }) {
+  const colors: Record<StatColor, string> = {
+    indigo: "text-indigo-600",
+    violet: "text-violet-600",
+    sky: "text-sky-600",
+    emerald: "text-emerald-600",
+  };
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <p className="text-xs font-medium uppercase tracking-wide text-gray-400">{label}</p>
-      <p className="mt-1 text-3xl font-bold text-gray-900">
+    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</p>
+      <p className={`mt-1.5 text-3xl font-bold ${colors[color]}`}>
         {value}
-        {suffix && <span className="ml-1.5 text-sm font-normal text-gray-500">{suffix}</span>}
+        {suffix && <span className="ml-1.5 text-sm font-normal text-slate-500">{suffix}</span>}
       </p>
     </div>
   );
@@ -377,7 +394,13 @@ function StatCard({
 function LoadingState() {
   return (
     <div className="flex items-center justify-center py-16">
-      <p className="text-gray-400">Carregando...</p>
+      <div className="flex items-center gap-2 text-sm text-slate-400">
+        <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+        </svg>
+        Carregando...
+      </div>
     </div>
   );
 }

@@ -70,50 +70,54 @@ export function PlayerList({ initialPlayers }: { initialPlayers: Player[] }) {
             value={name}
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
-            placeholder="Player name"
-            className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm"
+            placeholder="Nome do jogador"
+            className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           />
           <button
             onClick={handleAdd}
             disabled={loading || !name.trim()}
-            className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
           >
-            Add
+            Adicionar
           </button>
         </div>
       ) : (
-        <p className="text-sm text-gray-500">
-          <Link href="/login" className="text-blue-600 hover:underline">Login</Link> to manage players.
+        <p className="text-sm text-slate-500">
+          <Link href="/login" className="font-medium text-indigo-600 hover:underline">Faça login</Link> para gerenciar jogadores.
         </p>
       )}
 
       {error && (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>
+        <p className="rounded-lg border border-red-100 bg-red-50 px-4 py-2.5 text-sm text-red-600">{error}</p>
       )}
 
       {players.length === 0 ? (
-        <p className="text-gray-500 text-sm">No players yet.</p>
+        <div className="rounded-xl border border-slate-200 bg-white px-6 py-10 text-center shadow-sm">
+          <p className="text-sm text-slate-400">Nenhum jogador cadastrado ainda.</p>
+        </div>
       ) : (
-        <ul className="divide-y divide-gray-200 rounded-lg border border-gray-200">
-          {players.map((player) => (
-            <li
-              key={player.id}
-              className="flex items-center justify-between px-4 py-3"
-            >
-              <span className="text-sm font-medium text-gray-900">
-                {player.name}
-              </span>
-              {isLoggedIn && (
-                <button
-                  onClick={() => setPendingDeleteId(player.id)}
-                  className="text-sm text-red-600 hover:text-red-800"
-                >
-                  Delete
-                </button>
-              )}
-            </li>
-          ))}
-        </ul>
+        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+          <ul className="divide-y divide-slate-100">
+            {players.map((player) => (
+              <li
+                key={player.id}
+                className="flex items-center justify-between px-4 py-3 transition-colors hover:bg-slate-50"
+              >
+                <span className="text-sm font-medium text-slate-900">
+                  {player.name}
+                </span>
+                {isLoggedIn && (
+                  <button
+                    onClick={() => setPendingDeleteId(player.id)}
+                    className="text-xs font-medium text-slate-400 transition-colors hover:text-red-500"
+                  >
+                    Remover
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </div>
   );

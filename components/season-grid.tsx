@@ -22,36 +22,40 @@ export function SeasonGrid({
   const weeks = Array.from({ length: numWeeks }, (_, i) => i + 1);
 
   if (players.length === 0) {
-    return <p className="text-gray-500 text-sm">No players enrolled yet.</p>;
+    return (
+      <div className="rounded-xl border border-slate-200 bg-white px-6 py-10 text-center shadow-sm">
+        <p className="text-sm text-slate-400">Nenhum jogador inscrito ainda.</p>
+      </div>
+    );
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+    <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+      <table className="min-w-full divide-y divide-slate-100">
+        <thead className="bg-slate-50">
           <tr>
-            <th className="sticky left-0 z-10 bg-gray-50 px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">
-              Player
+            <th className="sticky left-0 z-10 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
+              Jogador
             </th>
             {weeks.map((w) => (
               <th
                 key={w}
-                className="px-3 py-3 text-center text-xs font-medium uppercase text-gray-500"
+                className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-400"
               >
                 <Link
                   href={`/seasons/${seasonId}/week/${w}`}
-                  className="text-blue-600 hover:underline"
+                  className="text-indigo-500 hover:text-indigo-700 transition-colors"
                 >
-                  W{w}
+                  S{w}
                 </Link>
               </th>
             ))}
-            <th className="px-4 py-3 text-right text-xs font-medium uppercase text-gray-500">
+            <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-400">
               Total
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200 bg-white">
+        <tbody className="divide-y divide-slate-100 bg-white">
           {players.map((player) => {
             const total = weeks.reduce((sum, w) => {
               const score = scoreMap.get(`${player.id}-${w}`);
@@ -59,28 +63,29 @@ export function SeasonGrid({
             }, 0);
 
             return (
-              <tr key={player.id}>
-                <td className="sticky left-0 z-10 bg-white whitespace-nowrap px-4 py-2 text-sm font-medium text-gray-900">
+              <tr key={player.id} className="hover:bg-slate-50 transition-colors">
+                <td className="sticky left-0 z-10 bg-white whitespace-nowrap px-4 py-2.5 text-sm font-medium text-slate-900">
                   {player.name}
                 </td>
                 {weeks.map((w) => {
                   const score = scoreMap.get(`${player.id}-${w}`);
+                  const attended = score?.attended;
                   return (
                     <td
                       key={w}
-                      className={`whitespace-nowrap px-3 py-2 text-center text-sm ${
+                      className={`whitespace-nowrap px-3 py-2.5 text-center text-sm ${
                         score
-                          ? score.attended
-                            ? "text-gray-900"
-                            : "text-gray-400"
-                          : "text-gray-300"
+                          ? attended
+                            ? "font-medium text-emerald-700"
+                            : "text-slate-400"
+                          : "text-slate-200"
                       }`}
                     >
-                      {score ? Number(score.points) : "-"}
+                      {score ? Number(score.points) : "–"}
                     </td>
                   );
                 })}
-                <td className="whitespace-nowrap px-4 py-2 text-right text-sm font-semibold text-gray-900">
+                <td className="whitespace-nowrap px-4 py-2.5 text-right text-sm font-bold text-indigo-600">
                   {total}
                 </td>
               </tr>

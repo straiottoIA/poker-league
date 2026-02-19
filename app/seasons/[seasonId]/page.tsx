@@ -23,34 +23,48 @@ export default async function SeasonDashboard({
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
+      {/* Header */}
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">{season.name}</h1>
-          <p className="text-sm text-gray-500">{season.num_weeks} weeks</p>
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-2xl font-bold text-slate-900">{season.name}</h1>
+            {season.is_active && (
+              <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
+                Ativa
+              </span>
+            )}
+          </div>
+          <p className="mt-1 text-sm text-slate-500">{season.num_weeks} semanas</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex shrink-0 gap-2">
           <Link
             href={`/seasons/${seasonId}/players`}
-            className="rounded border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
           >
-            Manage Roster
+            Gerenciar Elenco
           </Link>
           <Link
             href={`/seasons/${seasonId}/week/1`}
-            className="rounded bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
+            className="rounded-lg bg-indigo-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700"
           >
-            Enter Scores
+            Registrar Pontos
           </Link>
         </div>
       </div>
 
+      {/* Leaderboard */}
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold">Leaderboard</h2>
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+          Classificação
+        </h2>
         <Leaderboard entries={leaderboard} />
       </section>
 
+      {/* Season Grid */}
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold">Season Grid</h2>
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+          Grade da Temporada
+        </h2>
         <SeasonGrid
           seasonId={seasonId}
           players={players}

@@ -31,8 +31,8 @@ export function CreateSeasonForm() {
 
   if (!isLoggedIn) {
     return (
-      <p className="text-sm text-gray-500">
-        <Link href="/login" className="text-blue-600 hover:underline">Login</Link> to create a season.
+      <p className="text-sm text-slate-500">
+        <Link href="/login" className="font-medium text-indigo-600 hover:underline">Faça login</Link> para criar uma temporada.
       </p>
     );
   }
@@ -44,8 +44,8 @@ export function CreateSeasonForm() {
         value={name}
         onChange={(e) => setName(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && handleCreate()}
-        placeholder="Season name (e.g. Spring 2026)"
-        className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm"
+        placeholder="Nome (ex: Primavera 2026)"
+        className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
       />
       <input
         type="number"
@@ -53,14 +53,15 @@ export function CreateSeasonForm() {
         onChange={(e) => setNumWeeks(Number(e.target.value) || 10)}
         min={1}
         max={52}
-        className="w-20 rounded border border-gray-300 px-3 py-2 text-sm text-center"
+        aria-label="Número de semanas"
+        className="w-20 rounded-lg border border-slate-200 px-3 py-2 text-center text-sm text-slate-900 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
       />
       <button
         onClick={handleCreate}
         disabled={loading || !name.trim()}
-        className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+        className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
       >
-        Create
+        {loading ? "Criando..." : "Criar"}
       </button>
     </div>
   );

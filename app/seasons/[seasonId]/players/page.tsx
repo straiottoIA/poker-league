@@ -20,28 +20,37 @@ export default async function SeasonPlayersPage({
   ]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-8">
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">{season.name} - Roster</h1>
-          <p className="text-sm text-gray-500">
-            Check players to enroll them in this season
+          <div className="flex items-center gap-2 text-sm text-slate-500">
+            <Link href={`/seasons/${seasonId}`} className="hover:text-slate-900 transition-colors">
+              {season.name}
+            </Link>
+            <span>/</span>
+            <span className="font-medium text-slate-900">Elenco</span>
+          </div>
+          <h1 className="mt-1 text-2xl font-bold text-slate-900">Gerenciar Elenco</h1>
+          <p className="mt-0.5 text-sm text-slate-500">
+            Selecione os jogadores inscritos nesta temporada.
           </p>
         </div>
         <Link
           href={`/seasons/${seasonId}`}
-          className="rounded border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          className="shrink-0 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
         >
-          Back to Dashboard
+          Voltar
         </Link>
       </div>
       {allPlayers.length === 0 ? (
-        <div className="text-sm text-gray-500">
-          No players exist yet.{" "}
-          <Link href="/players" className="text-blue-600 hover:underline">
-            Add players first
-          </Link>
-          .
+        <div className="rounded-xl border border-slate-200 bg-white px-6 py-12 text-center shadow-sm">
+          <p className="text-sm text-slate-400">
+            Nenhum jogador cadastrado.{" "}
+            <Link href="/players" className="font-medium text-indigo-600 hover:underline">
+              Adicione jogadores primeiro
+            </Link>
+            .
+          </p>
         </div>
       ) : (
         <RosterManager
