@@ -23,17 +23,17 @@ export function SeasonGrid({
 
   if (players.length === 0) {
     return (
-      <div className="border border-[rgba(26,26,26,0.15)] bg-white px-8 py-12 text-center">
+      <div className="border border-border-strong bg-surface px-8 py-12 text-center">
         <p className="font-body text-sm text-muted">Nenhum jogador inscrito ainda.</p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto border border-[rgba(26,26,26,0.15)] bg-white">
+    <div className="overflow-x-auto border border-border-strong bg-surface">
       <table className="min-w-full">
         <thead>
-          <tr className="border-b border-[rgba(26,26,26,0.15)] bg-canvas">
+          <tr className="border-b border-border-strong bg-canvas">
             <th className="sticky left-0 z-10 bg-canvas px-5 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
               Jogador
             </th>
@@ -65,9 +65,9 @@ export function SeasonGrid({
             return (
               <tr
                 key={player.id}
-                className="border-b border-[rgba(26,26,26,0.08)] transition-colors hover:bg-canvas/40"
+                className="border-b border-border-subtle transition-colors hover:bg-canvas/40"
               >
-                <td className="sticky left-0 z-10 bg-white whitespace-nowrap px-5 py-2.5 font-body text-sm font-medium text-ink">
+                <td className="sticky left-0 z-10 bg-surface whitespace-nowrap px-5 py-2.5 font-body text-sm font-medium text-ink">
                   {player.name}
                 </td>
                 {weeks.map((w) => {
@@ -81,7 +81,7 @@ export function SeasonGrid({
                           ? attended
                             ? "font-bold text-crimson"
                             : "text-secondary"
-                          : "text-[rgba(26,26,26,0.2)]"
+                          : "text-muted/40"
                       }`}
                     >
                       {score ? Number(score.points) : "–"}

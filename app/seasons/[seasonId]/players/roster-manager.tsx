@@ -53,7 +53,7 @@ export function RosterManager({
   return (
     <div className="space-y-4">
       {error && (
-        <p className="border border-crimson/20 bg-[rgba(229,57,53,0.05)] px-4 py-2.5 font-body text-sm text-crimson">
+        <p className="border border-crimson/20 bg-tint-crimson px-4 py-2.5 font-body text-sm text-crimson">
           {error}
         </p>
       )}
@@ -62,7 +62,7 @@ export function RosterManager({
         {enrolledCount} de {allPlayers.length} inscrito{enrolledCount !== 1 ? "s" : ""}
       </p>
 
-      <div className="border border-[rgba(26,26,26,0.15)] bg-white">
+      <div className="border border-border-strong bg-surface">
         <ul>
           {allPlayers.map((player, i) => {
             const isEnrolled = enrolledIds.has(player.id);
@@ -71,8 +71,8 @@ export function RosterManager({
               <li
                 key={player.id}
                 className={`flex items-center gap-4 px-5 py-4 transition-colors hover:bg-canvas/60 ${
-                  i < allPlayers.length - 1 ? "border-b border-[rgba(26,26,26,0.08)]" : ""
-                } ${isEnrolled ? "bg-[rgba(229,57,53,0.03)]" : ""}`}
+                  i < allPlayers.length - 1 ? "border-b border-border-subtle" : ""
+                } ${isEnrolled ? "bg-tint-crimson-row" : ""}`}
               >
                 <input
                   id={`roster-${player.id}`}
@@ -80,7 +80,7 @@ export function RosterManager({
                   checked={isEnrolled}
                   onChange={() => handleToggle(player.id)}
                   disabled={!isLoggedIn || isLoading}
-                  className="h-4 w-4 border-[rgba(26,26,26,0.3)] accent-crimson"
+                  className="h-4 w-4 border-border-strong accent-crimson"
                 />
                 <label
                   htmlFor={`roster-${player.id}`}

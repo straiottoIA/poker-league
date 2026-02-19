@@ -29,17 +29,17 @@ export default async function SeasonsPage() {
           {seasons.length > 0 ? `${seasons.length} temporada${seasons.length !== 1 ? "s" : ""}` : "Histórico"}
         </p>
         {seasons.length === 0 ? (
-          <div className="border border-[rgba(26,26,26,0.15)] bg-white px-8 py-12 text-center">
+          <div className="border border-border-strong bg-surface px-8 py-12 text-center">
             <p className="font-body text-sm text-muted">Nenhuma temporada criada ainda.</p>
           </div>
         ) : (
-          <div className="border border-[rgba(26,26,26,0.15)] bg-white">
+          <div className="border border-border-strong bg-surface">
             <ul>
               {seasons.map((season, i) => (
                 <li
                   key={season.id}
                   className={`flex items-center justify-between px-5 py-4 transition-colors hover:bg-canvas/60 ${
-                    i < seasons.length - 1 ? "border-b border-[rgba(26,26,26,0.08)]" : ""
+                    i < seasons.length - 1 ? "border-b border-border-subtle" : ""
                   }`}
                 >
                   <Link

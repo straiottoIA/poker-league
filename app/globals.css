@@ -1,12 +1,68 @@
 @import "tailwindcss";
 
-@theme {
-  /* Brand Colors */
+/* Class-based dark mode */
+@variant dark (&:where(.dark, .dark *));
+
+/* Light theme variables */
+@layer base {
+  :root {
+    --canvas: #f5f0eb;
+    --ink: #1a1a1a;
+    --secondary: #666666;
+    --muted: #999999;
+    --surface: #ffffff;
+    --panel: #1a1a1a;
+    --border-strong: rgba(26, 26, 26, 0.15);
+    --border-subtle: rgba(26, 26, 26, 0.08);
+    --tint-crimson: rgba(229, 57, 53, 0.05);
+    --tint-crimson-row: rgba(229, 57, 53, 0.04);
+  }
+
+  /* Dark theme variables */
+  .dark {
+    --canvas: #121212;
+    --ink: #f0ebe4;
+    --secondary: #8a8a8a;
+    --muted: #4a4a4a;
+    --surface: #1e1e1e;
+    --panel: #252525;
+    --border-strong: rgba(240, 235, 228, 0.12);
+    --border-subtle: rgba(240, 235, 228, 0.07);
+    --tint-crimson: rgba(229, 57, 53, 0.1);
+    --tint-crimson-row: rgba(229, 57, 53, 0.08);
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: var(--font-body, 'DM Sans', -apple-system, sans-serif);
+    background-color: var(--canvas);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    opacity: 1;
+  }
+}
+
+/* Dynamic Tailwind utilities via CSS variables */
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-ink: var(--ink);
+  --color-secondary: var(--secondary);
+  --color-muted: var(--muted);
   --color-crimson: #e53935;
-  --color-canvas: #f5f0eb;
-  --color-ink: #1a1a1a;
-  --color-secondary: #666666;
-  --color-muted: #999999;
+  --color-surface: var(--surface);
+  --color-panel: var(--panel);
+  --color-border-strong: var(--border-strong);
+  --color-border-subtle: var(--border-subtle);
+  --color-tint-crimson: var(--tint-crimson);
+  --color-tint-crimson-row: var(--tint-crimson-row);
 }
 
 @layer utilities {
@@ -15,24 +71,5 @@
   }
   .font-body {
     font-family: var(--font-body, 'DM Sans', -apple-system, sans-serif);
-  }
-}
-
-@layer base {
-  *, *::before, *::after {
-    box-sizing: border-box;
-  }
-
-  body {
-    font-family: var(--font-body, 'DM Sans', -apple-system, sans-serif);
-    background-color: #f5f0eb;
-    color: #1a1a1a;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  input[type="number"]::-webkit-inner-spin-button,
-  input[type="number"]::-webkit-outer-spin-button {
-    opacity: 1;
   }
 }

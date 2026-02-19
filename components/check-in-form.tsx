@@ -50,7 +50,7 @@ export function CheckInForm({
 
   if (players.length === 0) {
     return (
-      <div className="border border-[rgba(26,26,26,0.15)] bg-white px-8 py-12 text-center">
+      <div className="border border-border-strong bg-surface px-8 py-12 text-center">
         <p className="font-body text-sm text-muted">Nenhum jogador inscrito nesta temporada.</p>
       </div>
     );
@@ -64,21 +64,17 @@ export function CheckInForm({
         <p className="font-body text-sm text-secondary">
           {seasonName} — Semana {weekNumber}
         </p>
-        <span className="border border-ink/20 px-3 py-1 font-body text-[10px] font-bold uppercase tracking-[2px] text-secondary">
+        <span className="border border-border-strong px-3 py-1 font-body text-[10px] font-bold uppercase tracking-[2px] text-secondary">
           {checkedCount}/{players.length} presentes
         </span>
       </div>
 
-      <div className="overflow-hidden border border-[rgba(26,26,26,0.15)] bg-white">
+      <div className="overflow-hidden border border-border-strong bg-surface">
         <table className="min-w-full">
           <thead>
-            <tr className="border-b border-[rgba(26,26,26,0.15)] bg-canvas">
-              <th className="px-5 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
-                Jogador
-              </th>
-              <th className="px-5 py-3 text-center font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
-                Status
-              </th>
+            <tr className="border-b border-border-strong bg-canvas">
+              <th className="px-5 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Jogador</th>
+              <th className="px-5 py-3 text-center font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -86,10 +82,7 @@ export function CheckInForm({
               const isCheckedIn = checkedIn.has(player.id);
               const isLoading = loading === player.id;
               return (
-                <tr
-                  key={player.id}
-                  className="border-b border-[rgba(26,26,26,0.08)] transition-colors hover:bg-canvas/40"
-                >
+                <tr key={player.id} className="border-b border-border-subtle transition-colors hover:bg-canvas/40">
                   <td className="whitespace-nowrap px-5 py-3.5 font-body text-sm font-medium text-ink">
                     {player.name}
                   </td>
@@ -118,15 +111,13 @@ export function CheckInForm({
       </div>
 
       {error && (
-        <p className="border border-crimson/20 bg-[rgba(229,57,53,0.05)] px-4 py-2.5 font-body text-sm text-crimson">
+        <p className="border border-crimson/20 bg-tint-crimson px-4 py-2.5 font-body text-sm text-crimson">
           {error}
         </p>
       )}
       {!isLoggedIn && (
         <p className="font-body text-sm text-secondary">
-          <Link href="/login" className="font-bold text-ink underline hover:text-crimson">
-            Faça login
-          </Link>{" "}
+          <Link href="/login" className="font-bold text-ink underline hover:text-crimson">Faça login</Link>{" "}
           para registrar presenças.
         </p>
       )}

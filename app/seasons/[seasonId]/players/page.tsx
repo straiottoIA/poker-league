@@ -36,7 +36,7 @@ export default async function SeasonPlayersPage({
       </div>
 
       {allPlayers.length === 0 ? (
-        <div className="border border-[rgba(26,26,26,0.15)] bg-white px-8 py-12 text-center">
+        <div className="border border-border-strong bg-surface px-8 py-12 text-center">
           <p className="font-body text-sm text-muted">
             Nenhum jogador cadastrado.{" "}
             <Link href="/players" className="font-bold text-ink underline hover:text-crimson">

@@ -208,14 +208,14 @@ export default function PerfilPage() {
 
       {/* ── RESUMO ── */}
       {activeTab === "resumo" && (
-        <div className="border border-[rgba(26,26,26,0.15)] bg-white p-8">
+        <div className="border border-border-strong bg-surface p-8">
           <div className="space-y-6">
             <InfoRow label="E-mail" value={user.email ?? "—"} />
             <InfoRow label="Função" value="Administrador" />
             <InfoRow label="Membro desde" value={memberSince} />
             <InfoRow label="Último acesso" value={lastLogin} />
           </div>
-          <div className="mt-10 border-t border-[rgba(26,26,26,0.08)] pt-6">
+          <div className="mt-10 border-t border-border-subtle pt-6">
             <button
               onClick={handleLogout}
               className="w-full border-2 border-ink bg-transparent py-3 font-body text-[11px] font-bold uppercase tracking-[2px] text-ink transition-all hover:bg-ink hover:text-canvas"
@@ -232,18 +232,18 @@ export default function PerfilPage() {
           {dataLoading && <LoadingState />}
           {!dataLoading && stats && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 border border-[rgba(26,26,26,0.15)] bg-white sm:grid-cols-3">
+              <div className="grid grid-cols-2 border border-border-strong bg-surface sm:grid-cols-3">
                 <MiniStatBar label="Temporadas" value={stats.totalSeasons} />
                 <MiniStatBar label="Jogadores" value={stats.totalPlayers} />
                 <MiniStatBar label="Semanas" value={stats.totalWeeksPlayed} />
                 <MiniStatBar label="Presenças" value={stats.totalAttendances} />
-                <div className="col-span-2 border-t border-[rgba(26,26,26,0.1)] sm:col-span-2">
+                <div className="col-span-2 border-t border-border-subtle sm:col-span-2">
                   <MiniStatBar label="Média / Semana" value={stats.avgAttendancePerWeek} suffix="jog." last />
                 </div>
               </div>
 
               {stats.activeSeason ? (
-                <div className="flex items-center justify-between border-l-4 border-crimson border border-[rgba(26,26,26,0.1)] bg-white px-6 py-4">
+                <div className="flex items-center justify-between border-l-4 border-crimson border border-border-subtle bg-surface px-6 py-4">
                   <div>
                     <p className="font-body text-[10px] font-bold uppercase tracking-[3px] text-crimson">
                       Temporada Ativa
@@ -255,7 +255,7 @@ export default function PerfilPage() {
                   </span>
                 </div>
               ) : (
-                <div className="border border-[rgba(26,26,26,0.15)] bg-white px-6 py-4">
+                <div className="border border-border-strong bg-surface px-6 py-4">
                   <p className="font-body text-sm text-muted">Nenhuma temporada ativa no momento.</p>
                 </div>
               )}
@@ -269,7 +269,7 @@ export default function PerfilPage() {
         <>
           {dataLoading && <LoadingState />}
           {!dataLoading && attendance && attendance.length === 0 && (
-            <div className="border border-[rgba(26,26,26,0.15)] bg-white px-8 py-12 text-center">
+            <div className="border border-border-strong bg-surface px-8 py-12 text-center">
               <p className="font-body text-sm text-muted">Nenhum dado de presença encontrado.</p>
             </div>
           )}
@@ -278,7 +278,7 @@ export default function PerfilPage() {
               {attendance.map(({ season, weeks, total }) => (
                 <div
                   key={season.id}
-                  className="border border-[rgba(26,26,26,0.15)] bg-white p-6"
+                  className="border border-border-strong bg-surface p-6"
                 >
                   <div className="mb-5 flex items-center justify-between">
                     <h3 className="font-heading text-lg font-bold text-ink">{season.name}</h3>
@@ -325,7 +325,7 @@ export default function PerfilPage() {
                         })}
                       </div>
                       <div className="mt-5 flex items-center gap-3">
-                        <div className="h-1 w-full bg-[rgba(26,26,26,0.08)]">
+                        <div className="h-1 w-full bg-border-strong">
                           <div
                             className="h-1 bg-crimson transition-all"
                             style={{
@@ -351,7 +351,7 @@ export default function PerfilPage() {
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-baseline justify-between gap-4 border-b border-[rgba(26,26,26,0.06)] pb-4">
+    <div className="flex items-baseline justify-between gap-4 border-b border-border-subtle pb-4">
       <p className="shrink-0 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">{label}</p>
       <p className="font-body text-sm font-medium text-ink">{value}</p>
     </div>
@@ -360,7 +360,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 
 function MiniStatBar({ label, value, suffix, last }: { label: string; value: number; suffix?: string; last?: boolean }) {
   return (
-    <div className={`p-6 text-center ${!last ? "border-r border-[rgba(26,26,26,0.1)]" : ""}`}>
+    <div className={`p-6 text-center ${!last ? "border-r border-border-subtle" : ""}`}>
       <p className="font-heading text-3xl font-bold text-crimson">
         {value}
         {suffix && <span className="ml-1 font-body text-sm font-normal text-muted">{suffix}</span>}

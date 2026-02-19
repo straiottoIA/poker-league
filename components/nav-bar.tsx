@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/lib/supabase/use-auth";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const links = [
   { href: "/seasons", label: "Temporadas" },
@@ -51,8 +52,9 @@ export function NavBar() {
             })}
           </div>
 
-          {/* Auth */}
+          {/* Auth + Theme toggle */}
           <div className="flex items-center gap-4">
+            <ThemeToggle />
             {isLoggedIn ? (
               <>
                 <Link

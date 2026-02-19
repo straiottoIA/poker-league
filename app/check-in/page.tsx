@@ -15,7 +15,7 @@ export default async function CheckInPage() {
           <p className="font-body text-[11px] font-bold uppercase tracking-[5px] text-crimson">Presença</p>
           <h1 className="mt-2 font-heading text-4xl font-bold text-ink">Check-in</h1>
         </div>
-        <div className="border border-[rgba(26,26,26,0.15)] bg-white px-8 py-12 text-center">
+        <div className="border border-border-strong bg-surface px-8 py-12 text-center">
           <p className="font-body text-sm text-muted">Nenhuma temporada ativa. Crie uma temporada para começar.</p>
         </div>
       </div>

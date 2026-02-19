@@ -69,7 +69,7 @@ export function AttendanceScoreForm({
 
   if (scores.length === 0) {
     return (
-      <div className="border border-[rgba(26,26,26,0.15)] bg-white px-8 py-12 text-center">
+      <div className="border border-border-strong bg-surface px-8 py-12 text-center">
         <p className="font-body text-sm text-muted">Nenhum jogador inscrito nesta temporada.</p>
       </div>
     );
@@ -79,10 +79,10 @@ export function AttendanceScoreForm({
 
   return (
     <div className="space-y-5">
-      <div className="overflow-hidden border border-[rgba(26,26,26,0.15)] bg-white">
+      <div className="overflow-hidden border border-border-strong bg-surface">
         <table className="min-w-full">
           <thead>
-            <tr className="border-b border-[rgba(26,26,26,0.15)] bg-canvas">
+            <tr className="border-b border-border-strong bg-canvas">
               <th className="px-5 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
                 Jogador
               </th>
@@ -98,8 +98,8 @@ export function AttendanceScoreForm({
             {scores.map((score, i) => (
               <tr
                 key={score.player_id}
-                className={`border-b border-[rgba(26,26,26,0.08)] transition-colors hover:bg-canvas/40 ${
-                  score.attended ? "bg-[rgba(229,57,53,0.03)]" : ""
+                className={`border-b border-border-subtle transition-colors hover:bg-canvas/40 ${
+                  score.attended ? "bg-tint-crimson-row" : ""
                 }`}
               >
                 <td className="whitespace-nowrap px-5 py-3 font-body text-sm font-medium text-ink">
@@ -112,7 +112,7 @@ export function AttendanceScoreForm({
                     onChange={(e) => updateScore(i, "attended", e.target.checked)}
                     disabled={!isLoggedIn}
                     aria-label={`Presença de ${score.player_name}`}
-                    className="h-4 w-4 border-[rgba(26,26,26,0.3)] text-crimson accent-crimson"
+                    className="h-4 w-4 border-border-strong text-crimson accent-crimson"
                   />
                 </td>
                 <td className="px-5 py-3 text-center">
@@ -126,7 +126,7 @@ export function AttendanceScoreForm({
                     min={0}
                     max={9999}
                     aria-label={`Pontos de ${score.player_name}`}
-                    className="w-20 border border-[rgba(26,26,26,0.2)] bg-white px-2 py-1.5 text-center font-body text-sm text-ink focus:border-ink focus:outline-none disabled:bg-canvas disabled:text-muted"
+                    className="w-20 border border-border-strong bg-surface px-2 py-1.5 text-center font-body text-sm text-ink focus:border-ink focus:outline-none disabled:bg-canvas disabled:text-muted"
                   />
                 </td>
               </tr>

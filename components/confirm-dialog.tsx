@@ -45,11 +45,11 @@ export function ConfirmDialog({
       className="fixed inset-0 z-50 flex items-center justify-center"
     >
       <div
-        className="absolute inset-0 bg-ink/40"
+        className="absolute inset-0 bg-black/50"
         onClick={onCancel}
         aria-hidden="true"
       />
-      <div className="relative z-10 w-full max-w-sm border-2 border-ink bg-white p-8">
+      <div className="relative z-10 w-full max-w-sm border-2 border-ink bg-surface p-8">
         <h2 id="dialog-title" className="font-heading text-xl font-bold text-ink">
           {title}
         </h2>

@@ -48,7 +48,7 @@ export function CreateSeasonForm() {
         onChange={(e) => setName(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && handleCreate()}
         placeholder="Nome (ex: Primavera 2026)"
-        className="flex-1 border border-[rgba(26,26,26,0.2)] bg-white px-3 py-2.5 font-body text-sm text-ink placeholder:text-muted focus:border-ink focus:outline-none"
+        className="flex-1 border border-border-strong bg-surface px-3 py-2.5 font-body text-sm text-ink placeholder:text-muted focus:border-ink focus:outline-none"
       />
       <input
         type="number"
@@ -57,7 +57,7 @@ export function CreateSeasonForm() {
         min={1}
         max={52}
         aria-label="Número de semanas"
-        className="w-20 border border-[rgba(26,26,26,0.2)] bg-white px-3 py-2.5 text-center font-body text-sm text-ink focus:border-ink focus:outline-none"
+        className="w-20 border border-border-strong bg-surface px-3 py-2.5 text-center font-body text-sm text-ink focus:border-ink focus:outline-none"
       />
       <button
         onClick={handleCreate}

@@ -49,7 +49,7 @@ export default function LoginPage() {
         </div>
 
         {/* Form card */}
-        <div className="border-2 border-ink bg-white px-8 py-10">
+        <div className="border-2 border-ink bg-surface px-8 py-10">
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
               <label htmlFor="email" className="block font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
@@ -62,7 +62,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 autoComplete="email"
-                className="mt-2 block w-full border border-[rgba(26,26,26,0.2)] bg-canvas px-3 py-2.5 font-body text-sm text-ink focus:border-ink focus:bg-white focus:outline-none"
+                className="mt-2 block w-full border border-border-strong bg-canvas px-3 py-2.5 font-body text-sm text-ink focus:border-ink focus:bg-surface focus:outline-none"
               />
             </div>
 
@@ -77,12 +77,12 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 autoComplete="current-password"
-                className="mt-2 block w-full border border-[rgba(26,26,26,0.2)] bg-canvas px-3 py-2.5 font-body text-sm text-ink focus:border-ink focus:bg-white focus:outline-none"
+                className="mt-2 block w-full border border-border-strong bg-canvas px-3 py-2.5 font-body text-sm text-ink focus:border-ink focus:bg-surface focus:outline-none"
               />
             </div>
 
             {error && (
-              <p className="border border-crimson/20 bg-[rgba(229,57,53,0.05)] px-4 py-2.5 font-body text-sm text-crimson">
+              <p className="border border-crimson/20 bg-tint-crimson px-4 py-2.5 font-body text-sm text-crimson">
                 {error}
               </p>
             )}

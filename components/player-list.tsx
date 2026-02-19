@@ -71,7 +71,7 @@ export function PlayerList({ initialPlayers }: { initialPlayers: Player[] }) {
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
             placeholder="Nome do jogador"
-            className="flex-1 border border-[rgba(26,26,26,0.2)] bg-white px-3 py-2.5 font-body text-sm text-ink placeholder:text-muted focus:border-ink focus:outline-none"
+            className="flex-1 border border-border-strong bg-surface px-3 py-2.5 font-body text-sm text-ink placeholder:text-muted focus:border-ink focus:outline-none"
           />
           <button
             onClick={handleAdd}
@@ -91,23 +91,23 @@ export function PlayerList({ initialPlayers }: { initialPlayers: Player[] }) {
       )}
 
       {error && (
-        <p className="border border-crimson/20 bg-[rgba(229,57,53,0.05)] px-4 py-2.5 font-body text-sm text-crimson">
+        <p className="border border-crimson/20 bg-tint-crimson px-4 py-2.5 font-body text-sm text-crimson">
           {error}
         </p>
       )}
 
       {players.length === 0 ? (
-        <div className="border border-[rgba(26,26,26,0.15)] bg-white px-8 py-12 text-center">
+        <div className="border border-border-strong bg-surface px-8 py-12 text-center">
           <p className="font-body text-sm text-muted">Nenhum jogador cadastrado ainda.</p>
         </div>
       ) : (
-        <div className="border border-[rgba(26,26,26,0.15)] bg-white">
+        <div className="border border-border-strong bg-surface">
           <ul>
             {players.map((player, i) => (
               <li
                 key={player.id}
                 className={`flex items-center justify-between px-5 py-3.5 transition-colors hover:bg-canvas/60 ${
-                  i < players.length - 1 ? "border-b border-[rgba(26,26,26,0.08)]" : ""
+                  i < players.length - 1 ? "border-b border-border-subtle" : ""
                 }`}
               >
                 <span className="font-body text-sm font-medium text-ink">

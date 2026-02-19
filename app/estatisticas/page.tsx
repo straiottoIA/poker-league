@@ -111,14 +111,14 @@ export default async function EstatisticasPage() {
       {/* Stat bar */}
       <section>
         <p className="mb-4 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Visão Geral</p>
-        <div className="grid grid-cols-2 border border-[rgba(26,26,26,0.15)] bg-white sm:grid-cols-4">
+        <div className="grid grid-cols-2 border border-border-strong bg-surface sm:grid-cols-4">
           <StatBar label="Temporadas" value={seasons.length} />
           <StatBar label="Jogadores" value={players.length} />
           <StatBar label="Semanas" value={totalWeeksPlayed} />
           <StatBar label="Presenças" value={totalAttendances} last />
         </div>
         {activeSeason && (
-          <div className="mt-4 flex items-center justify-between border-l-4 border-crimson bg-white px-6 py-4 border border-[rgba(26,26,26,0.1)]">
+          <div className="mt-4 flex items-center justify-between border-l-4 border-crimson bg-surface px-6 py-4 border border-border-subtle">
             <div>
               <p className="font-body text-[10px] font-bold uppercase tracking-[3px] text-crimson">
                 Temporada Ativa
@@ -134,19 +134,19 @@ export default async function EstatisticasPage() {
 
       {/* Ranking all-time */}
       <section>
-        <div className="mb-4 flex items-center gap-3 border-b border-[rgba(26,26,26,0.12)] pb-3">
+        <div className="mb-4 flex items-center gap-3 border-b border-border-subtle pb-3">
           <span className="font-body text-[10px] font-bold text-crimson">♠</span>
           <h2 className="font-heading text-2xl font-bold text-ink">Ranking All-Time</h2>
         </div>
         {allTimeRanking.length === 0 ? (
-          <div className="border border-[rgba(26,26,26,0.15)] bg-white px-8 py-12 text-center">
+          <div className="border border-border-strong bg-surface px-8 py-12 text-center">
             <p className="font-body text-sm text-muted">Nenhuma pontuação registrada ainda.</p>
           </div>
         ) : (
-          <div className="overflow-hidden border border-[rgba(26,26,26,0.15)] bg-white">
+          <div className="overflow-hidden border border-border-strong bg-surface">
             <table className="min-w-full">
               <thead>
-                <tr className="border-b border-[rgba(26,26,26,0.15)] bg-canvas">
+                <tr className="border-b border-border-strong bg-canvas">
                   <th className="px-5 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">#</th>
                   <th className="px-5 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Jogador</th>
                   <th className="px-5 py-3 text-right font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Pontos</th>
@@ -158,8 +158,8 @@ export default async function EstatisticasPage() {
                 {allTimeRanking.map((entry, i) => (
                   <tr
                     key={entry.player_id}
-                    className={`border-b border-[rgba(26,26,26,0.08)] transition-colors hover:bg-canvas/60 ${
-                      i === 0 ? "bg-[rgba(229,57,53,0.04)]" : ""
+                    className={`border-b border-border-subtle transition-colors hover:bg-canvas/60 ${
+                      i === 0 ? "bg-tint-crimson-row" : ""
                     }`}
                   >
                     <td className="px-5 py-3.5">
@@ -185,19 +185,19 @@ export default async function EstatisticasPage() {
 
       {/* Por temporada */}
       <section>
-        <div className="mb-4 flex items-center gap-3 border-b border-[rgba(26,26,26,0.12)] pb-3">
+        <div className="mb-4 flex items-center gap-3 border-b border-border-subtle pb-3">
           <span className="font-body text-[10px] font-bold text-crimson">♣</span>
           <h2 className="font-heading text-2xl font-bold text-ink">Por Temporada</h2>
         </div>
         {seasonSummaries.length === 0 ? (
-          <div className="border border-[rgba(26,26,26,0.15)] bg-white px-8 py-12 text-center">
+          <div className="border border-border-strong bg-surface px-8 py-12 text-center">
             <p className="font-body text-sm text-muted">Nenhuma temporada encontrada.</p>
           </div>
         ) : (
-          <div className="overflow-hidden border border-[rgba(26,26,26,0.15)] bg-white">
+          <div className="overflow-hidden border border-border-strong bg-surface">
             <table className="min-w-full">
               <thead>
-                <tr className="border-b border-[rgba(26,26,26,0.15)] bg-canvas">
+                <tr className="border-b border-border-strong bg-canvas">
                   <th className="px-5 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Temporada</th>
                   <th className="px-5 py-3 text-right font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Semanas</th>
                   <th className="px-5 py-3 text-right font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Presenças</th>
@@ -206,7 +206,7 @@ export default async function EstatisticasPage() {
               </thead>
               <tbody>
                 {seasonSummaries.map(({ season, total_attendances, weeks_played, top_player, top_points }) => (
-                  <tr key={season.id} className="border-b border-[rgba(26,26,26,0.08)] transition-colors hover:bg-canvas/60">
+                  <tr key={season.id} className="border-b border-border-subtle transition-colors hover:bg-canvas/60">
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-3">
                         <span className="font-body text-sm font-medium text-ink">{season.name}</span>
@@ -244,7 +244,7 @@ export default async function EstatisticasPage() {
 
 function StatBar({ label, value, last }: { label: string; value: number; last?: boolean }) {
   return (
-    <div className={`p-8 text-center ${!last ? "border-r border-[rgba(26,26,26,0.1)]" : ""}`}>
+    <div className={`p-8 text-center ${!last ? "border-r border-border-subtle" : ""}`}>
       <p className="font-heading text-[32px] font-bold text-crimson">{value}</p>
       <p className="mt-1.5 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">{label}</p>
     </div>

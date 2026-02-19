@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Libre_Baskerville, DM_Sans } from "next/font/google";
 import { NavBar } from "@/components/nav-bar";
+import { Providers } from "./providers";
 import "./globals.css";
 
 const libreBaskerville = Libre_Baskerville({
@@ -29,12 +30,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
       <body className={`${libreBaskerville.variable} ${dmSans.variable} min-h-screen bg-canvas text-ink antialiased`}>
-        <NavBar />
-        <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-          {children}
-        </main>
+        <Providers>
+          <NavBar />
+          <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+            {children}
+          </main>
+        </Providers>
       </body>
     </html>
   );
