@@ -27,33 +27,35 @@ export function NavBar() {
   return (
     <nav className="border-b-2 border-ink bg-canvas">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
-        <div className="flex h-16 items-center justify-between">
+        <div className="flex h-16 items-center gap-4">
           {/* Logo */}
           <Link href="/" className="shrink-0 font-heading text-2xl font-bold tracking-[3px]">
             TTP<em className="not-italic text-crimson">F</em>
           </Link>
 
-          {/* Nav links */}
-          <div className="flex items-center gap-6">
-            {links.map((link) => {
-              const isActive = pathname.startsWith(link.href);
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  aria-current={isActive ? "page" : undefined}
-                  className={`font-body text-[11px] font-bold uppercase tracking-[2px] transition-colors ${
-                    isActive ? "text-crimson" : "text-ink hover:text-crimson"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
+          {/* Nav links — scrollable on mobile, no scrollbar visible */}
+          <div className="scrollbar-hide flex-1 overflow-x-auto">
+            <div className="flex min-w-max items-center gap-6 px-1">
+              {links.map((link) => {
+                const isActive = pathname.startsWith(link.href);
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`font-body text-[11px] font-bold uppercase tracking-[2px] transition-colors ${
+                      isActive ? "text-crimson" : "text-ink hover:text-crimson"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
 
           {/* Auth + Theme toggle */}
-          <div className="flex items-center gap-4">
+          <div className="flex shrink-0 items-center gap-4">
             <ThemeToggle />
             {isLoggedIn ? (
               <>

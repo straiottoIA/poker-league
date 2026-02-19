@@ -32,8 +32,20 @@
     --tint-crimson-row: rgba(229, 57, 53, 0.08);
   }
 
+  html, body {
+    overflow-x: hidden;
+  }
+
   *, *::before, *::after {
     box-sizing: border-box;
+  }
+
+  .scrollbar-hide {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 
   body {
