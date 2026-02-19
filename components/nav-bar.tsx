@@ -11,6 +11,7 @@ const links = [
   { href: "/players", label: "Jogadores" },
   { href: "/check-in", label: "Check-in" },
   { href: "/estatisticas", label: "Estatísticas" },
+  { href: "/hall-da-fama", label: "Hall da Fama" },
 ];
 
 export function NavBar() {
