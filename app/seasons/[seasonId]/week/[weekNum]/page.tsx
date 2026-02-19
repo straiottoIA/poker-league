@@ -48,29 +48,22 @@ export default async function WeekPage({
   const nextWeek = weekNumber < season.num_weeks ? weekNumber + 1 : null;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 text-sm text-slate-500">
-            <Link href={`/seasons/${seasonId}`} className="hover:text-slate-900 transition-colors">
-              {season.name}
-            </Link>
-            <span>/</span>
-            <span className="font-medium text-slate-900">Semana {weekNumber}</span>
-          </div>
-          <h1 className="mt-1 text-2xl font-bold text-slate-900">
-            Semana {weekNumber}
-          </h1>
-          <p className="mt-0.5 text-sm text-slate-500">
-            Registre presença e pontuação de cada jogador.
-          </p>
+    <div className="space-y-10">
+      {/* Header */}
+      <div className="border-b-2 border-ink pb-6">
+        <div className="flex items-center gap-2 font-body text-[11px] font-bold uppercase tracking-[2px] text-muted">
+          <Link href={`/seasons/${seasonId}`} className="transition-colors hover:text-ink">
+            {season.name}
+          </Link>
+          <span>/</span>
+          <span className="text-ink">Semana {weekNumber}</span>
         </div>
-        <Link
-          href={`/seasons/${seasonId}`}
-          className="shrink-0 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
-        >
-          Voltar
-        </Link>
+        <h1 className="mt-3 font-heading text-4xl font-bold text-ink">
+          Semana {weekNumber}
+        </h1>
+        <p className="mt-2 font-body text-sm text-secondary">
+          Registre presença e pontuação de cada jogador.
+        </p>
       </div>
 
       <AttendanceScoreForm
@@ -79,29 +72,30 @@ export default async function WeekPage({
         initialScores={initialScores}
       />
 
-      <div className="flex items-center justify-between border-t border-slate-100 pt-4">
+      {/* Week navigation */}
+      <div className="flex items-center justify-between border-t-2 border-ink pt-6">
         {prevWeek ? (
           <Link
             href={`/seasons/${seasonId}/week/${prevWeek}`}
-            className="flex items-center gap-1.5 text-sm font-medium text-indigo-600 transition-colors hover:text-indigo-800"
+            className="flex items-center gap-2 font-body text-[11px] font-bold uppercase tracking-[2px] text-secondary transition-colors hover:text-crimson"
           >
-            <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clipRule="evenodd" />
-            </svg>
-            Semana {prevWeek}
+            ← Semana {prevWeek}
           </Link>
         ) : (
           <div />
         )}
+        <Link
+          href={`/seasons/${seasonId}`}
+          className="font-body text-[11px] font-bold uppercase tracking-[2px] text-muted transition-colors hover:text-ink"
+        >
+          Ver Dashboard
+        </Link>
         {nextWeek ? (
           <Link
             href={`/seasons/${seasonId}/week/${nextWeek}`}
-            className="flex items-center gap-1.5 text-sm font-medium text-indigo-600 transition-colors hover:text-indigo-800"
+            className="flex items-center gap-2 font-body text-[11px] font-bold uppercase tracking-[2px] text-secondary transition-colors hover:text-crimson"
           >
-            Semana {nextWeek}
-            <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
-            </svg>
+            Semana {nextWeek} →
           </Link>
         ) : (
           <div />

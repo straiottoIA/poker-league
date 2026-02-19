@@ -18,28 +18,6 @@ interface SeasonSummary {
   top_points: number;
 }
 
-function RankBadge({ rank }: { rank: number }) {
-  if (rank === 1)
-    return (
-      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-amber-100 text-xs font-bold text-amber-700">
-        1
-      </span>
-    );
-  if (rank === 2)
-    return (
-      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-slate-200 text-xs font-bold text-slate-600">
-        2
-      </span>
-    );
-  if (rank === 3)
-    return (
-      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-orange-100 text-xs font-bold text-orange-600">
-        3
-      </span>
-    );
-  return <span className="text-sm text-slate-400">{rank}</span>;
-}
-
 export default async function EstatisticasPage() {
   const supabase = await createClient();
 
@@ -55,13 +33,11 @@ export default async function EstatisticasPage() {
   const players = playersRes.data ?? [];
   const scores = scoresRes.data ?? [];
 
-  // ── Totais gerais ──
   const totalAttendances = scores.filter((s) => s.attended).length;
   const uniqueWeeks = new Set(scores.map((s) => `${s.season_id}-${s.week_number}`));
   const totalWeeksPlayed = uniqueWeeks.size;
   const activeSeason = seasons.find((s) => s.is_active) ?? null;
 
-  // ── Ranking geral (all-time) ──
   const playerMap = new Map<
     string,
     { name: string; points: number; weeks: number; seasons: Set<string> }
@@ -92,7 +68,6 @@ export default async function EstatisticasPage() {
     }))
     .sort((a, b) => b.total_points - a.total_points);
 
-  // ── Resumo por temporada ──
   const seasonSummaries: SeasonSummary[] = seasons.map((season) => {
     const seasonScores = scores.filter((s) => s.season_id === season.id);
     const attended = seasonScores.filter((s) => s.attended);
@@ -126,94 +101,80 @@ export default async function EstatisticasPage() {
   });
 
   return (
-    <div className="space-y-10">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">Estatísticas</h1>
-        <p className="mt-1 text-sm text-slate-500">Visão geral da liga e histórico completo.</p>
+    <div className="space-y-12">
+      {/* Header */}
+      <div className="border-b-2 border-ink pb-6">
+        <p className="font-body text-[11px] font-bold uppercase tracking-[5px] text-crimson">Liga</p>
+        <h1 className="mt-2 font-heading text-4xl font-bold text-ink">Estatísticas</h1>
       </div>
 
-      {/* ── Cards gerais ── */}
+      {/* Stat bar */}
       <section>
-        <h2 className="mb-4 text-xs font-semibold uppercase tracking-wide text-slate-400">
-          Visão Geral
-        </h2>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <StatCard label="Temporadas" value={seasons.length} color="indigo" />
-          <StatCard label="Jogadores" value={players.length} color="violet" />
-          <StatCard label="Semanas Jogadas" value={totalWeeksPlayed} color="sky" />
-          <StatCard label="Presenças Totais" value={totalAttendances} color="emerald" />
+        <p className="mb-4 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Visão Geral</p>
+        <div className="grid grid-cols-2 border border-[rgba(26,26,26,0.15)] bg-white sm:grid-cols-4">
+          <StatBar label="Temporadas" value={seasons.length} />
+          <StatBar label="Jogadores" value={players.length} />
+          <StatBar label="Semanas" value={totalWeeksPlayed} />
+          <StatBar label="Presenças" value={totalAttendances} last />
         </div>
         {activeSeason && (
-          <div className="mt-4 flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4">
+          <div className="mt-4 flex items-center justify-between border-l-4 border-crimson bg-white px-6 py-4 border border-[rgba(26,26,26,0.1)]">
             <div>
-              <span className="text-xs font-semibold uppercase tracking-wide text-emerald-600">
+              <p className="font-body text-[10px] font-bold uppercase tracking-[3px] text-crimson">
                 Temporada Ativa
-              </span>
-              <p className="mt-0.5 text-base font-bold text-emerald-900">
-                {activeSeason.name}
               </p>
+              <p className="mt-1 font-heading text-xl font-bold text-ink">{activeSeason.name}</p>
             </div>
-            <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-              {activeSeason.num_weeks} semanas
+            <span className="bg-crimson px-3 py-1 font-body text-[10px] font-bold uppercase tracking-[2px] text-white">
+              {activeSeason.num_weeks} sem.
             </span>
           </div>
         )}
       </section>
 
-      {/* ── Ranking geral ── */}
+      {/* Ranking all-time */}
       <section>
-        <h2 className="mb-4 text-xs font-semibold uppercase tracking-wide text-slate-400">
-          Ranking Geral (All-Time)
-        </h2>
+        <div className="mb-4 flex items-center gap-3 border-b border-[rgba(26,26,26,0.12)] pb-3">
+          <span className="font-body text-[10px] font-bold text-crimson">♠</span>
+          <h2 className="font-heading text-2xl font-bold text-ink">Ranking All-Time</h2>
+        </div>
         {allTimeRanking.length === 0 ? (
-          <div className="rounded-xl border border-slate-200 bg-white px-6 py-10 text-center shadow-sm">
-            <p className="text-sm text-slate-400">Nenhuma pontuação registrada ainda.</p>
+          <div className="border border-[rgba(26,26,26,0.15)] bg-white px-8 py-12 text-center">
+            <p className="font-body text-sm text-muted">Nenhuma pontuação registrada ainda.</p>
           </div>
         ) : (
-          <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-            <table className="min-w-full divide-y divide-slate-100">
-              <thead className="bg-slate-50">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
-                    #
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
-                    Jogador
-                  </th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-400">
-                    Pontos
-                  </th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-400">
-                    Presenças
-                  </th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-400">
-                    Temporadas
-                  </th>
+          <div className="overflow-hidden border border-[rgba(26,26,26,0.15)] bg-white">
+            <table className="min-w-full">
+              <thead>
+                <tr className="border-b border-[rgba(26,26,26,0.15)] bg-canvas">
+                  <th className="px-5 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">#</th>
+                  <th className="px-5 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Jogador</th>
+                  <th className="px-5 py-3 text-right font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Pontos</th>
+                  <th className="px-5 py-3 text-right font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Presenças</th>
+                  <th className="px-5 py-3 text-right font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Temporadas</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 bg-white">
+              <tbody>
                 {allTimeRanking.map((entry, i) => (
                   <tr
                     key={entry.player_id}
-                    className={`transition-colors hover:bg-slate-50 ${
-                      i === 0 ? "bg-amber-50/60" : ""
+                    className={`border-b border-[rgba(26,26,26,0.08)] transition-colors hover:bg-canvas/60 ${
+                      i === 0 ? "bg-[rgba(229,57,53,0.04)]" : ""
                     }`}
                   >
-                    <td className="whitespace-nowrap px-4 py-3">
-                      <RankBadge rank={i + 1} />
+                    <td className="px-5 py-3.5">
+                      {i < 3 ? (
+                        <span className="bg-crimson px-1.5 py-0.5 font-body text-[10px] font-bold text-white">
+                          {i + 1}°
+                        </span>
+                      ) : (
+                        <span className="font-body text-sm text-muted">{i + 1}</span>
+                      )}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-slate-900">
-                      {entry.player_name}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-right text-sm font-bold text-indigo-600">
-                      {entry.total_points}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-right text-sm text-slate-400">
-                      {entry.weeks_attended}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-right text-sm text-slate-400">
-                      {entry.seasons_played}
-                    </td>
+                    <td className="px-5 py-3.5 font-body text-sm font-medium text-ink">{entry.player_name}</td>
+                    <td className="px-5 py-3.5 text-right font-heading text-lg font-bold text-crimson">{entry.total_points}</td>
+                    <td className="px-5 py-3.5 text-right font-body text-sm text-muted">{entry.weeks_attended}</td>
+                    <td className="px-5 py-3.5 text-right font-body text-sm text-muted">{entry.seasons_played}</td>
                   </tr>
                 ))}
               </tbody>
@@ -222,63 +183,52 @@ export default async function EstatisticasPage() {
         )}
       </section>
 
-      {/* ── Por temporada ── */}
+      {/* Por temporada */}
       <section>
-        <h2 className="mb-4 text-xs font-semibold uppercase tracking-wide text-slate-400">
-          Por Temporada
-        </h2>
+        <div className="mb-4 flex items-center gap-3 border-b border-[rgba(26,26,26,0.12)] pb-3">
+          <span className="font-body text-[10px] font-bold text-crimson">♣</span>
+          <h2 className="font-heading text-2xl font-bold text-ink">Por Temporada</h2>
+        </div>
         {seasonSummaries.length === 0 ? (
-          <div className="rounded-xl border border-slate-200 bg-white px-6 py-10 text-center shadow-sm">
-            <p className="text-sm text-slate-400">Nenhuma temporada encontrada.</p>
+          <div className="border border-[rgba(26,26,26,0.15)] bg-white px-8 py-12 text-center">
+            <p className="font-body text-sm text-muted">Nenhuma temporada encontrada.</p>
           </div>
         ) : (
-          <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-            <table className="min-w-full divide-y divide-slate-100">
-              <thead className="bg-slate-50">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
-                    Temporada
-                  </th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-400">
-                    Semanas
-                  </th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-400">
-                    Presenças
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
-                    Melhor Jogador
-                  </th>
+          <div className="overflow-hidden border border-[rgba(26,26,26,0.15)] bg-white">
+            <table className="min-w-full">
+              <thead>
+                <tr className="border-b border-[rgba(26,26,26,0.15)] bg-canvas">
+                  <th className="px-5 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Temporada</th>
+                  <th className="px-5 py-3 text-right font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Semanas</th>
+                  <th className="px-5 py-3 text-right font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Presenças</th>
+                  <th className="px-5 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Melhor Jogador</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 bg-white">
+              <tbody>
                 {seasonSummaries.map(({ season, total_attendances, weeks_played, top_player, top_points }) => (
-                  <tr key={season.id} className="transition-colors hover:bg-slate-50">
-                    <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-slate-900">
-                      <div className="flex items-center gap-2">
-                        {season.name}
+                  <tr key={season.id} className="border-b border-[rgba(26,26,26,0.08)] transition-colors hover:bg-canvas/60">
+                    <td className="px-5 py-3.5">
+                      <div className="flex items-center gap-3">
+                        <span className="font-body text-sm font-medium text-ink">{season.name}</span>
                         {season.is_active && (
-                          <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700">
+                          <span className="bg-crimson px-2 py-0.5 font-body text-[10px] font-bold uppercase tracking-[2px] text-white">
                             Ativa
                           </span>
                         )}
                       </div>
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-right text-sm text-slate-500">
+                    <td className="px-5 py-3.5 text-right font-body text-sm text-secondary">
                       {weeks_played}/{season.num_weeks}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-right text-sm text-slate-500">
-                      {total_attendances}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm text-slate-900">
+                    <td className="px-5 py-3.5 text-right font-body text-sm text-secondary">{total_attendances}</td>
+                    <td className="px-5 py-3.5 font-body text-sm text-ink">
                       {top_player ? (
-                        <span>
+                        <>
                           {top_player}
-                          <span className="ml-1.5 text-xs font-medium text-indigo-500">
-                            {top_points} pts
-                          </span>
-                        </span>
+                          <span className="ml-2 font-body text-[11px] font-bold text-crimson">{top_points} pts</span>
+                        </>
                       ) : (
-                        <span className="text-slate-300">—</span>
+                        <span className="text-muted">—</span>
                       )}
                     </td>
                   </tr>
@@ -292,19 +242,11 @@ export default async function EstatisticasPage() {
   );
 }
 
-type StatColor = "indigo" | "violet" | "sky" | "emerald";
-
-function StatCard({ label, value, color = "indigo" }: { label: string; value: number; color?: StatColor }) {
-  const colors: Record<StatColor, string> = {
-    indigo: "text-indigo-600",
-    violet: "text-violet-600",
-    sky: "text-sky-600",
-    emerald: "text-emerald-600",
-  };
+function StatBar({ label, value, last }: { label: string; value: number; last?: boolean }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</p>
-      <p className={`mt-1.5 text-3xl font-bold ${colors[color]}`}>{value}</p>
+    <div className={`p-8 text-center ${!last ? "border-r border-[rgba(26,26,26,0.1)]" : ""}`}>
+      <p className="font-heading text-[32px] font-bold text-crimson">{value}</p>
+      <p className="mt-1.5 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">{label}</p>
     </div>
   );
 }

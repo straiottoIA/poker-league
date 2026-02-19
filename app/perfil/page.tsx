@@ -141,7 +141,7 @@ export default function PerfilPage() {
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <p className="text-sm text-slate-400">Carregando...</p>
+        <p className="font-body text-sm text-muted">Carregando...</p>
       </div>
     );
   }
@@ -171,31 +171,33 @@ export default function PerfilPage() {
   ];
 
   return (
-    <div className="mx-auto max-w-2xl py-6 px-4">
-      {/* Header do perfil */}
-      <div className="mb-8 flex items-center gap-5">
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-indigo-600 text-2xl font-bold text-white shadow-sm">
-          {initials}
-        </div>
-        <div>
-          <h1 className="text-xl font-bold text-slate-900">{user.email}</h1>
-          <span className="mt-1 inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700">
-            Administrador
-          </span>
+    <div className="mx-auto max-w-2xl space-y-10">
+      {/* Profile header */}
+      <div className="border-b-2 border-ink pb-8">
+        <div className="flex items-center gap-6">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center bg-ink font-heading text-2xl font-bold text-canvas">
+            {initials}
+          </div>
+          <div>
+            <p className="font-body text-[10px] font-bold uppercase tracking-[3px] text-crimson">
+              Administrador
+            </p>
+            <h1 className="mt-1 font-heading text-2xl font-bold text-ink">{user.email}</h1>
+          </div>
         </div>
       </div>
 
-      {/* Abas */}
-      <div className="mb-6 border-b border-slate-200">
+      {/* Tabs */}
+      <div className="border-b-2 border-ink">
         <div className="flex gap-0">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`-mb-px border-b-2 px-4 pb-3 text-sm font-medium transition-colors ${
+              className={`-mb-0.5 border-b-2 px-5 pb-3 font-body text-[11px] font-bold uppercase tracking-[2px] transition-colors ${
                 activeTab === tab.id
-                  ? "border-indigo-600 text-indigo-600"
-                  : "border-transparent text-slate-500 hover:text-slate-700"
+                  ? "border-crimson text-crimson"
+                  : "border-transparent text-muted hover:text-ink"
               }`}
             >
               {tab.label}
@@ -206,17 +208,17 @@ export default function PerfilPage() {
 
       {/* ── RESUMO ── */}
       {activeTab === "resumo" && (
-        <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-          <div className="space-y-5">
+        <div className="border border-[rgba(26,26,26,0.15)] bg-white p-8">
+          <div className="space-y-6">
             <InfoRow label="E-mail" value={user.email ?? "—"} />
             <InfoRow label="Função" value="Administrador" />
             <InfoRow label="Membro desde" value={memberSince} />
             <InfoRow label="Último acesso" value={lastLogin} />
           </div>
-          <div className="mt-8 border-t border-slate-100 pt-6">
+          <div className="mt-10 border-t border-[rgba(26,26,26,0.08)] pt-6">
             <button
               onClick={handleLogout}
-              className="w-full rounded-lg border border-red-100 bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-100"
+              className="w-full border-2 border-ink bg-transparent py-3 font-body text-[11px] font-bold uppercase tracking-[2px] text-ink transition-all hover:bg-ink hover:text-canvas"
             >
               Sair da conta
             </button>
@@ -230,38 +232,31 @@ export default function PerfilPage() {
           {dataLoading && <LoadingState />}
           {!dataLoading && stats && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <StatCard label="Temporadas" value={stats.totalSeasons} color="indigo" />
-                <StatCard label="Jogadores" value={stats.totalPlayers} color="violet" />
-                <StatCard label="Semanas Registradas" value={stats.totalWeeksPlayed} color="sky" />
-                <StatCard label="Total de Presenças" value={stats.totalAttendances} color="emerald" />
-                <div className="col-span-2">
-                  <StatCard
-                    label="Média de Presenças / Semana"
-                    value={stats.avgAttendancePerWeek}
-                    suffix="jogadores"
-                    color="indigo"
-                  />
+              <div className="grid grid-cols-2 border border-[rgba(26,26,26,0.15)] bg-white sm:grid-cols-3">
+                <MiniStatBar label="Temporadas" value={stats.totalSeasons} />
+                <MiniStatBar label="Jogadores" value={stats.totalPlayers} />
+                <MiniStatBar label="Semanas" value={stats.totalWeeksPlayed} />
+                <MiniStatBar label="Presenças" value={stats.totalAttendances} />
+                <div className="col-span-2 border-t border-[rgba(26,26,26,0.1)] sm:col-span-2">
+                  <MiniStatBar label="Média / Semana" value={stats.avgAttendancePerWeek} suffix="jog." last />
                 </div>
               </div>
 
               {stats.activeSeason ? (
-                <div className="flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50 p-5">
+                <div className="flex items-center justify-between border-l-4 border-crimson border border-[rgba(26,26,26,0.1)] bg-white px-6 py-4">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-emerald-600">
+                    <p className="font-body text-[10px] font-bold uppercase tracking-[3px] text-crimson">
                       Temporada Ativa
                     </p>
-                    <p className="mt-1 text-lg font-bold text-emerald-900">
-                      {stats.activeSeason.name}
-                    </p>
+                    <p className="mt-1 font-heading text-xl font-bold text-ink">{stats.activeSeason.name}</p>
                   </div>
-                  <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-                    {stats.activeSeason.num_weeks} semanas
+                  <span className="bg-crimson px-3 py-1 font-body text-[10px] font-bold uppercase tracking-[2px] text-white">
+                    {stats.activeSeason.num_weeks} sem.
                   </span>
                 </div>
               ) : (
-                <div className="rounded-xl border border-amber-200 bg-amber-50 p-5">
-                  <p className="text-sm text-amber-700">Nenhuma temporada ativa no momento.</p>
+                <div className="border border-[rgba(26,26,26,0.15)] bg-white px-6 py-4">
+                  <p className="font-body text-sm text-muted">Nenhuma temporada ativa no momento.</p>
                 </div>
               )}
             </div>
@@ -274,33 +269,33 @@ export default function PerfilPage() {
         <>
           {dataLoading && <LoadingState />}
           {!dataLoading && attendance && attendance.length === 0 && (
-            <div className="rounded-xl border border-slate-200 bg-white px-6 py-12 text-center shadow-sm">
-              <p className="text-sm text-slate-400">Nenhum dado de presença encontrado.</p>
+            <div className="border border-[rgba(26,26,26,0.15)] bg-white px-8 py-12 text-center">
+              <p className="font-body text-sm text-muted">Nenhum dado de presença encontrado.</p>
             </div>
           )}
           {!dataLoading && attendance && attendance.length > 0 && (
-            <div className="space-y-5">
+            <div className="space-y-6">
               {attendance.map(({ season, weeks, total }) => (
                 <div
                   key={season.id}
-                  className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+                  className="border border-[rgba(26,26,26,0.15)] bg-white p-6"
                 >
-                  <div className="mb-4 flex items-center justify-between">
-                    <h3 className="font-semibold text-slate-900">{season.name}</h3>
-                    <div className="flex items-center gap-2">
+                  <div className="mb-5 flex items-center justify-between">
+                    <h3 className="font-heading text-lg font-bold text-ink">{season.name}</h3>
+                    <div className="flex items-center gap-3">
                       {season.is_active && (
-                        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700">
+                        <span className="bg-crimson px-2 py-0.5 font-body text-[10px] font-bold uppercase tracking-[2px] text-white">
                           Ativa
                         </span>
                       )}
-                      <span className="text-xs font-medium text-slate-400">
+                      <span className="font-body text-[11px] font-bold uppercase tracking-[2px] text-muted">
                         {total} presenças
                       </span>
                     </div>
                   </div>
 
                   {weeks.length === 0 ? (
-                    <p className="text-sm text-slate-400">Sem presenças registradas.</p>
+                    <p className="font-body text-sm text-muted">Sem presenças registradas.</p>
                   ) : (
                     <>
                       <div className="flex flex-wrap gap-2">
@@ -309,34 +304,36 @@ export default function PerfilPage() {
                           const intensity = max > 0 ? count / max : 0;
                           const bg =
                             intensity > 0.75
-                              ? "bg-indigo-600 text-white"
+                              ? "bg-crimson text-white"
                               : intensity > 0.5
-                              ? "bg-indigo-400 text-white"
+                              ? "bg-[rgba(229,57,53,0.5)] text-white"
                               : intensity > 0.25
-                              ? "bg-indigo-100 text-indigo-800"
-                              : "bg-indigo-50 text-indigo-500";
+                              ? "bg-[rgba(229,57,53,0.2)] text-ink"
+                              : "bg-[rgba(229,57,53,0.06)] text-ink";
 
                           return (
                             <div
                               key={weekNumber}
-                              className={`flex flex-col items-center rounded-lg px-3 py-2 ${bg}`}
+                              className={`flex flex-col items-center px-3 py-2 ${bg}`}
                             >
-                              <span className="text-xs opacity-75">S{weekNumber}</span>
-                              <span className="text-lg font-bold">{count}</span>
+                              <span className="font-body text-[10px] font-bold uppercase tracking-[1px] opacity-70">
+                                S{weekNumber}
+                              </span>
+                              <span className="font-heading text-lg font-bold">{count}</span>
                             </div>
                           );
                         })}
                       </div>
-                      <div className="mt-4 flex items-center gap-2">
-                        <div className="h-1.5 w-full rounded-full bg-slate-100">
+                      <div className="mt-5 flex items-center gap-3">
+                        <div className="h-1 w-full bg-[rgba(26,26,26,0.08)]">
                           <div
-                            className="h-1.5 rounded-full bg-indigo-500 transition-all"
+                            className="h-1 bg-crimson transition-all"
                             style={{
                               width: `${Math.round((weeks.length / season.num_weeks) * 100)}%`,
                             }}
                           />
                         </div>
-                        <span className="shrink-0 text-xs font-medium text-slate-400">
+                        <span className="shrink-0 font-body text-[11px] font-bold uppercase tracking-[2px] text-muted">
                           {weeks.length}/{season.num_weeks}
                         </span>
                       </div>
@@ -354,39 +351,21 @@ export default function PerfilPage() {
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
-    <div>
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</p>
-      <p className="mt-1 text-base font-medium text-slate-900">{value}</p>
+    <div className="flex items-baseline justify-between gap-4 border-b border-[rgba(26,26,26,0.06)] pb-4">
+      <p className="shrink-0 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">{label}</p>
+      <p className="font-body text-sm font-medium text-ink">{value}</p>
     </div>
   );
 }
 
-type StatColor = "indigo" | "violet" | "sky" | "emerald";
-
-function StatCard({
-  label,
-  value,
-  suffix,
-  color = "indigo",
-}: {
-  label: string;
-  value: number;
-  suffix?: string;
-  color?: StatColor;
-}) {
-  const colors: Record<StatColor, string> = {
-    indigo: "text-indigo-600",
-    violet: "text-violet-600",
-    sky: "text-sky-600",
-    emerald: "text-emerald-600",
-  };
+function MiniStatBar({ label, value, suffix, last }: { label: string; value: number; suffix?: string; last?: boolean }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</p>
-      <p className={`mt-1.5 text-3xl font-bold ${colors[color]}`}>
+    <div className={`p-6 text-center ${!last ? "border-r border-[rgba(26,26,26,0.1)]" : ""}`}>
+      <p className="font-heading text-3xl font-bold text-crimson">
         {value}
-        {suffix && <span className="ml-1.5 text-sm font-normal text-slate-500">{suffix}</span>}
+        {suffix && <span className="ml-1 font-body text-sm font-normal text-muted">{suffix}</span>}
       </p>
+      <p className="mt-1 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">{label}</p>
     </div>
   );
 }
@@ -394,13 +373,7 @@ function StatCard({
 function LoadingState() {
   return (
     <div className="flex items-center justify-center py-16">
-      <div className="flex items-center gap-2 text-sm text-slate-400">
-        <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-        </svg>
-        Carregando...
-      </div>
+      <p className="font-body text-sm text-muted">Carregando...</p>
     </div>
   );
 }

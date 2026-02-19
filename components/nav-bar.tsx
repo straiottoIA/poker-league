@@ -24,16 +24,16 @@ export function NavBar() {
   };
 
   return (
-    <nav className="border-b border-slate-200 bg-white shadow-sm">
+    <nav className="border-b-2 border-ink bg-canvas">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
-        <div className="flex h-16 items-center gap-8">
-          <Link href="/" className="flex items-center gap-2.5 shrink-0">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-600 text-xs font-bold text-white">
-              TP
-            </span>
-            <span className="text-base font-bold text-slate-900 tracking-tight">TTPF</span>
+        <div className="flex h-16 items-center justify-between">
+          {/* Logo */}
+          <Link href="/" className="shrink-0 font-heading text-2xl font-bold tracking-[3px]">
+            TTP<em className="not-italic text-crimson">F</em>
           </Link>
-          <div className="flex flex-1 items-stretch gap-0">
+
+          {/* Nav links */}
+          <div className="flex items-center gap-6">
             {links.map((link) => {
               const isActive = pathname.startsWith(link.href);
               return (
@@ -41,53 +41,43 @@ export function NavBar() {
                   key={link.href}
                   href={link.href}
                   aria-current={isActive ? "page" : undefined}
-                  className={`relative flex items-center px-3 py-5 text-sm font-medium transition-colors ${
-                    isActive
-                      ? "text-indigo-600"
-                      : "text-slate-500 hover:text-slate-900"
+                  className={`font-body text-[11px] font-bold uppercase tracking-[2px] transition-colors ${
+                    isActive ? "text-crimson" : "text-ink hover:text-crimson"
                   }`}
                 >
                   {link.label}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-0 h-0.5 w-full rounded-t-full bg-indigo-600" />
-                  )}
                 </Link>
               );
             })}
           </div>
-          <div className="flex items-stretch">
+
+          {/* Auth */}
+          <div className="flex items-center gap-4">
             {isLoggedIn ? (
-              <div className="flex items-stretch gap-0">
+              <>
                 <Link
                   href="/perfil"
                   aria-current={pathname === "/perfil" ? "page" : undefined}
-                  className={`relative flex items-center px-3 py-5 text-sm font-medium transition-colors ${
-                    pathname === "/perfil"
-                      ? "text-indigo-600"
-                      : "text-slate-500 hover:text-slate-900"
+                  className={`font-body text-[11px] font-bold uppercase tracking-[2px] transition-colors ${
+                    pathname === "/perfil" ? "text-crimson" : "text-ink hover:text-crimson"
                   }`}
                 >
                   Perfil
-                  {pathname === "/perfil" && (
-                    <span className="absolute bottom-0 left-0 h-0.5 w-full rounded-t-full bg-indigo-600" />
-                  )}
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center px-3 py-5 text-sm font-medium text-slate-500 transition-colors hover:text-slate-900"
+                  className="font-body text-[11px] font-bold uppercase tracking-[2px] text-secondary transition-colors hover:text-ink"
                 >
                   Sair
                 </button>
-              </div>
+              </>
             ) : (
-              <div className="flex items-center">
-                <Link
-                  href="/login"
-                  className="rounded-lg bg-indigo-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
-                >
-                  Login
-                </Link>
-              </div>
+              <Link
+                href="/login"
+                className="bg-ink px-5 py-2 font-body text-[11px] font-bold uppercase tracking-[2px] text-canvas transition-colors hover:bg-crimson"
+              >
+                Login
+              </Link>
             )}
           </div>
         </div>

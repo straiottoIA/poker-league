@@ -50,8 +50,8 @@ export function CheckInForm({
 
   if (players.length === 0) {
     return (
-      <div className="rounded-xl border border-slate-200 bg-white px-6 py-10 text-center shadow-sm">
-        <p className="text-sm text-slate-400">Nenhum jogador inscrito nesta temporada.</p>
+      <div className="border border-[rgba(26,26,26,0.15)] bg-white px-8 py-12 text-center">
+        <p className="font-body text-sm text-muted">Nenhum jogador inscrito nesta temporada.</p>
       </div>
     );
   }
@@ -61,52 +61,53 @@ export function CheckInForm({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium text-slate-600">
-          {seasonName} &mdash; Semana {weekNumber}
+        <p className="font-body text-sm text-secondary">
+          {seasonName} — Semana {weekNumber}
         </p>
-        <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700">
+        <span className="border border-ink/20 px-3 py-1 font-body text-[10px] font-bold uppercase tracking-[2px] text-secondary">
           {checkedCount}/{players.length} presentes
         </span>
       </div>
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <table className="min-w-full divide-y divide-slate-100">
-          <thead className="bg-slate-50">
-            <tr>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
+
+      <div className="overflow-hidden border border-[rgba(26,26,26,0.15)] bg-white">
+        <table className="min-w-full">
+          <thead>
+            <tr className="border-b border-[rgba(26,26,26,0.15)] bg-canvas">
+              <th className="px-5 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
                 Jogador
               </th>
-              <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-400">
+              <th className="px-5 py-3 text-center font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
                 Status
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 bg-white">
+          <tbody>
             {players.map((player) => {
               const isCheckedIn = checkedIn.has(player.id);
               const isLoading = loading === player.id;
               return (
-                <tr key={player.id} className="transition-colors hover:bg-slate-50">
-                  <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-slate-900">
+                <tr
+                  key={player.id}
+                  className="border-b border-[rgba(26,26,26,0.08)] transition-colors hover:bg-canvas/40"
+                >
+                  <td className="whitespace-nowrap px-5 py-3.5 font-body text-sm font-medium text-ink">
                     {player.name}
                   </td>
-                  <td className="px-4 py-3 text-center">
+                  <td className="px-5 py-3.5 text-center">
                     {isCheckedIn ? (
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-                        <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
-                        </svg>
-                        Presente
+                      <span className="font-body text-[11px] font-bold uppercase tracking-[2px] text-crimson">
+                        ✓ Presente
                       </span>
                     ) : isLoggedIn ? (
                       <button
                         onClick={() => handleCheckIn(player.id)}
                         disabled={isLoading}
-                        className="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
+                        className="bg-ink px-4 py-1.5 font-body text-[10px] font-bold uppercase tracking-[2px] text-canvas transition-colors hover:bg-crimson disabled:opacity-50"
                       >
                         {isLoading ? "..." : "Check-in"}
                       </button>
                     ) : (
-                      <span className="text-xs text-slate-300">–</span>
+                      <span className="font-body text-xs text-muted">–</span>
                     )}
                   </td>
                 </tr>
@@ -115,12 +116,18 @@ export function CheckInForm({
           </tbody>
         </table>
       </div>
+
       {error && (
-        <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-600 border border-red-100">{error}</p>
+        <p className="border border-crimson/20 bg-[rgba(229,57,53,0.05)] px-4 py-2.5 font-body text-sm text-crimson">
+          {error}
+        </p>
       )}
       {!isLoggedIn && (
-        <p className="text-sm text-slate-500">
-          <Link href="/login" className="font-medium text-indigo-600 hover:underline">Faça login</Link> para registrar presenças.
+        <p className="font-body text-sm text-secondary">
+          <Link href="/login" className="font-bold text-ink underline hover:text-crimson">
+            Faça login
+          </Link>{" "}
+          para registrar presenças.
         </p>
       )}
     </div>

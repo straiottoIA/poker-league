@@ -7,10 +7,11 @@ export default async function PlayersPage() {
   const players = await getPlayers(supabase);
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">Jogadores</h1>
-        <p className="mt-1 text-sm text-slate-500">
+    <div className="space-y-10">
+      <div className="border-b-2 border-ink pb-6">
+        <p className="font-body text-[11px] font-bold uppercase tracking-[5px] text-crimson">Liga</p>
+        <h1 className="mt-2 font-heading text-4xl font-bold text-ink">Jogadores</h1>
+        <p className="mt-2 font-body text-sm text-secondary">
           {players.length} jogador{players.length !== 1 ? "es" : ""} cadastrado{players.length !== 1 ? "s" : ""}.
         </p>
       </div>

@@ -31,8 +31,11 @@ export function CreateSeasonForm() {
 
   if (!isLoggedIn) {
     return (
-      <p className="text-sm text-slate-500">
-        <Link href="/login" className="font-medium text-indigo-600 hover:underline">Faça login</Link> para criar uma temporada.
+      <p className="font-body text-sm text-secondary">
+        <Link href="/login" className="font-bold text-ink underline hover:text-crimson">
+          Faça login
+        </Link>{" "}
+        para criar uma temporada.
       </p>
     );
   }
@@ -45,7 +48,7 @@ export function CreateSeasonForm() {
         onChange={(e) => setName(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && handleCreate()}
         placeholder="Nome (ex: Primavera 2026)"
-        className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+        className="flex-1 border border-[rgba(26,26,26,0.2)] bg-white px-3 py-2.5 font-body text-sm text-ink placeholder:text-muted focus:border-ink focus:outline-none"
       />
       <input
         type="number"
@@ -54,12 +57,12 @@ export function CreateSeasonForm() {
         min={1}
         max={52}
         aria-label="Número de semanas"
-        className="w-20 rounded-lg border border-slate-200 px-3 py-2 text-center text-sm text-slate-900 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+        className="w-20 border border-[rgba(26,26,26,0.2)] bg-white px-3 py-2.5 text-center font-body text-sm text-ink focus:border-ink focus:outline-none"
       />
       <button
         onClick={handleCreate}
         disabled={loading || !name.trim()}
-        className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
+        className="bg-ink px-6 py-2.5 font-body text-[11px] font-bold uppercase tracking-[2px] text-canvas transition-colors hover:bg-crimson disabled:opacity-50"
       >
         {loading ? "Criando..." : "Criar"}
       </button>

@@ -1,11 +1,32 @@
 @import "tailwindcss";
 
+@theme {
+  /* Brand Colors */
+  --color-crimson: #e53935;
+  --color-canvas: #f5f0eb;
+  --color-ink: #1a1a1a;
+  --color-secondary: #666666;
+  --color-muted: #999999;
+}
+
+@layer utilities {
+  .font-heading {
+    font-family: var(--font-heading, 'Libre Baskerville', Georgia, serif);
+  }
+  .font-body {
+    font-family: var(--font-body, 'DM Sans', -apple-system, sans-serif);
+  }
+}
+
 @layer base {
   *, *::before, *::after {
     box-sizing: border-box;
   }
 
   body {
+    font-family: var(--font-body, 'DM Sans', -apple-system, sans-serif);
+    background-color: #f5f0eb;
+    color: #1a1a1a;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }

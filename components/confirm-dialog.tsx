@@ -45,30 +45,30 @@ export function ConfirmDialog({
       className="fixed inset-0 z-50 flex items-center justify-center"
     >
       <div
-        className="absolute inset-0 bg-black/30"
+        className="absolute inset-0 bg-ink/40"
         onClick={onCancel}
         aria-hidden="true"
       />
-      <div className="relative z-10 w-full max-w-sm rounded-xl bg-white p-6 shadow-lg">
-        <h2 id="dialog-title" className="text-base font-semibold text-gray-900">
+      <div className="relative z-10 w-full max-w-sm border-2 border-ink bg-white p-8">
+        <h2 id="dialog-title" className="font-heading text-xl font-bold text-ink">
           {title}
         </h2>
-        <p id="dialog-message" className="mt-2 text-sm text-gray-600">
+        <p id="dialog-message" className="mt-3 font-body text-sm leading-relaxed text-secondary">
           {message}
         </p>
-        <div className="mt-6 flex justify-end gap-3">
+        <div className="mt-8 flex gap-3">
+          <button
+            onClick={onConfirm}
+            className="flex-1 bg-crimson px-6 py-3 font-body text-[11px] font-bold uppercase tracking-[2px] text-white transition-colors hover:bg-[#c62828]"
+          >
+            {confirmLabel}
+          </button>
           <button
             ref={cancelRef}
             onClick={onCancel}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="flex-1 border-2 border-ink bg-transparent px-6 py-3 font-body text-[11px] font-bold uppercase tracking-[2px] text-ink transition-all hover:bg-ink hover:text-canvas"
           >
             Cancelar
-          </button>
-          <button
-            onClick={onConfirm}
-            className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
-          >
-            {confirmLabel}
           </button>
         </div>
       </div>

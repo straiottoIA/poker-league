@@ -38,22 +38,21 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-[70vh] items-center justify-center">
       <div className="w-full max-w-sm">
-        <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-          <div className="mb-8 text-center">
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600">
-              <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-              </svg>
-            </div>
-            <h1 className="text-xl font-bold text-slate-900">Acesso Admin</h1>
-            <p className="mt-1 text-sm text-slate-500">
-              Entre para gerenciar a liga de poker.
-            </p>
-          </div>
+        {/* Header */}
+        <div className="mb-10 text-center">
+          <p className="font-heading text-4xl font-bold tracking-[3px]">
+            TTP<em className="not-italic text-crimson">F</em>
+          </p>
+          <p className="mt-3 font-body text-[11px] font-bold uppercase tracking-[5px] text-muted">
+            Acesso Administrativo
+          </p>
+        </div>
 
-          <form onSubmit={handleLogin} className="space-y-5">
+        {/* Form card */}
+        <div className="border-2 border-ink bg-white px-8 py-10">
+          <form onSubmit={handleLogin} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-slate-700">
+              <label htmlFor="email" className="block font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
                 E-mail
               </label>
               <input
@@ -63,12 +62,12 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 autoComplete="email"
-                className="mt-1.5 block w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                className="mt-2 block w-full border border-[rgba(26,26,26,0.2)] bg-canvas px-3 py-2.5 font-body text-sm text-ink focus:border-ink focus:bg-white focus:outline-none"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-slate-700">
+              <label htmlFor="password" className="block font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
                 Senha
               </label>
               <input
@@ -78,12 +77,12 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 autoComplete="current-password"
-                className="mt-1.5 block w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                className="mt-2 block w-full border border-[rgba(26,26,26,0.2)] bg-canvas px-3 py-2.5 font-body text-sm text-ink focus:border-ink focus:bg-white focus:outline-none"
               />
             </div>
 
             {error && (
-              <p className="rounded-lg border border-red-100 bg-red-50 px-3 py-2.5 text-sm text-red-600">
+              <p className="border border-crimson/20 bg-[rgba(229,57,53,0.05)] px-4 py-2.5 font-body text-sm text-crimson">
                 {error}
               </p>
             )}
@@ -91,12 +90,16 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
+              className="w-full bg-crimson py-3 font-body text-[11px] font-bold uppercase tracking-[2px] text-white transition-colors hover:bg-[#c62828] disabled:opacity-50"
             >
               {loading ? "Entrando..." : "Entrar"}
             </button>
           </form>
         </div>
+
+        <p className="mt-6 text-center font-body text-[11px] text-muted">
+          Onde cada mão conta uma história.
+        </p>
       </div>
     </div>
   );

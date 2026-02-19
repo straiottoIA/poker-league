@@ -58,7 +58,7 @@ export function AttendanceScoreForm({
           attended: s.attended,
         }))
       );
-      setMessage("Salvo com sucesso!");
+      setMessage("Salvo com sucesso.");
       router.refresh();
     } catch (err) {
       setMessage(`Erro: ${err instanceof Error ? err.message : "Erro desconhecido"}`);
@@ -69,8 +69,8 @@ export function AttendanceScoreForm({
 
   if (scores.length === 0) {
     return (
-      <div className="rounded-xl border border-slate-200 bg-white px-6 py-10 text-center shadow-sm">
-        <p className="text-sm text-slate-400">Nenhum jogador inscrito nesta temporada.</p>
+      <div className="border border-[rgba(26,26,26,0.15)] bg-white px-8 py-12 text-center">
+        <p className="font-body text-sm text-muted">Nenhum jogador inscrito nesta temporada.</p>
       </div>
     );
   }
@@ -78,44 +78,44 @@ export function AttendanceScoreForm({
   const isError = message.startsWith("Erro");
 
   return (
-    <div className="space-y-4">
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <table className="min-w-full divide-y divide-slate-100">
-          <thead className="bg-slate-50">
-            <tr>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
+    <div className="space-y-5">
+      <div className="overflow-hidden border border-[rgba(26,26,26,0.15)] bg-white">
+        <table className="min-w-full">
+          <thead>
+            <tr className="border-b border-[rgba(26,26,26,0.15)] bg-canvas">
+              <th className="px-5 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
                 Jogador
               </th>
-              <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-400">
+              <th className="px-5 py-3 text-center font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
                 Presente
               </th>
-              <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-400">
+              <th className="px-5 py-3 text-center font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
                 Pontos
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 bg-white">
+          <tbody>
             {scores.map((score, i) => (
               <tr
                 key={score.player_id}
-                className={`transition-colors hover:bg-slate-50 ${
-                  score.attended ? "bg-emerald-50/40" : ""
+                className={`border-b border-[rgba(26,26,26,0.08)] transition-colors hover:bg-canvas/40 ${
+                  score.attended ? "bg-[rgba(229,57,53,0.03)]" : ""
                 }`}
               >
-                <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-slate-900">
+                <td className="whitespace-nowrap px-5 py-3 font-body text-sm font-medium text-ink">
                   {score.player_name}
                 </td>
-                <td className="px-4 py-3 text-center">
+                <td className="px-5 py-3 text-center">
                   <input
                     type="checkbox"
                     checked={score.attended}
                     onChange={(e) => updateScore(i, "attended", e.target.checked)}
                     disabled={!isLoggedIn}
                     aria-label={`Presença de ${score.player_name}`}
-                    className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                    className="h-4 w-4 border-[rgba(26,26,26,0.3)] text-crimson accent-crimson"
                   />
                 </td>
-                <td className="px-4 py-3 text-center">
+                <td className="px-5 py-3 text-center">
                   <input
                     type="number"
                     value={score.points}
@@ -126,7 +126,7 @@ export function AttendanceScoreForm({
                     min={0}
                     max={9999}
                     aria-label={`Pontos de ${score.player_name}`}
-                    className="w-20 rounded-lg border border-slate-200 px-2 py-1.5 text-center text-sm text-slate-900 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:bg-slate-50 disabled:text-slate-400"
+                    className="w-20 border border-[rgba(26,26,26,0.2)] bg-white px-2 py-1.5 text-center font-body text-sm text-ink focus:border-ink focus:outline-none disabled:bg-canvas disabled:text-muted"
                   />
                 </td>
               </tr>
@@ -134,21 +134,20 @@ export function AttendanceScoreForm({
           </tbody>
         </table>
       </div>
+
       {isLoggedIn ? (
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-5">
           <button
             onClick={handleSave}
             disabled={saving}
-            className="rounded-lg bg-indigo-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
+            className="bg-crimson px-8 py-3 font-body text-[11px] font-bold uppercase tracking-[2px] text-white transition-colors hover:bg-[#c62828] disabled:opacity-50"
           >
             {saving ? "Salvando..." : "Salvar Pontuações"}
           </button>
           {message && (
             <span
-              className={`rounded-lg px-3 py-1.5 text-sm font-medium ${
-                isError
-                  ? "bg-red-50 text-red-600 border border-red-100"
-                  : "bg-emerald-50 text-emerald-700 border border-emerald-100"
+              className={`font-body text-sm ${
+                isError ? "text-crimson" : "text-secondary"
               }`}
             >
               {message}
@@ -156,8 +155,11 @@ export function AttendanceScoreForm({
           )}
         </div>
       ) : (
-        <p className="text-sm text-slate-500">
-          <Link href="/login" className="font-medium text-indigo-600 hover:underline">Faça login</Link> para editar pontuações.
+        <p className="font-body text-sm text-secondary">
+          <Link href="/login" className="font-bold text-ink underline hover:text-crimson">
+            Faça login
+          </Link>{" "}
+          para editar pontuações.
         </p>
       )}
     </div>

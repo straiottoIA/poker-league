@@ -23,39 +23,39 @@ export function SeasonGrid({
 
   if (players.length === 0) {
     return (
-      <div className="rounded-xl border border-slate-200 bg-white px-6 py-10 text-center shadow-sm">
-        <p className="text-sm text-slate-400">Nenhum jogador inscrito ainda.</p>
+      <div className="border border-[rgba(26,26,26,0.15)] bg-white px-8 py-12 text-center">
+        <p className="font-body text-sm text-muted">Nenhum jogador inscrito ainda.</p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
-      <table className="min-w-full divide-y divide-slate-100">
-        <thead className="bg-slate-50">
-          <tr>
-            <th className="sticky left-0 z-10 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
+    <div className="overflow-x-auto border border-[rgba(26,26,26,0.15)] bg-white">
+      <table className="min-w-full">
+        <thead>
+          <tr className="border-b border-[rgba(26,26,26,0.15)] bg-canvas">
+            <th className="sticky left-0 z-10 bg-canvas px-5 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
               Jogador
             </th>
             {weeks.map((w) => (
               <th
                 key={w}
-                className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-400"
+                className="px-3 py-3 text-center font-body text-[10px] font-bold uppercase tracking-[2px] text-muted"
               >
                 <Link
                   href={`/seasons/${seasonId}/week/${w}`}
-                  className="text-indigo-500 hover:text-indigo-700 transition-colors"
+                  className="transition-colors hover:text-crimson"
                 >
                   S{w}
                 </Link>
               </th>
             ))}
-            <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-400">
+            <th className="px-5 py-3 text-right font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
               Total
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100 bg-white">
+        <tbody>
           {players.map((player) => {
             const total = weeks.reduce((sum, w) => {
               const score = scoreMap.get(`${player.id}-${w}`);
@@ -63,8 +63,11 @@ export function SeasonGrid({
             }, 0);
 
             return (
-              <tr key={player.id} className="hover:bg-slate-50 transition-colors">
-                <td className="sticky left-0 z-10 bg-white whitespace-nowrap px-4 py-2.5 text-sm font-medium text-slate-900">
+              <tr
+                key={player.id}
+                className="border-b border-[rgba(26,26,26,0.08)] transition-colors hover:bg-canvas/40"
+              >
+                <td className="sticky left-0 z-10 bg-white whitespace-nowrap px-5 py-2.5 font-body text-sm font-medium text-ink">
                   {player.name}
                 </td>
                 {weeks.map((w) => {
@@ -73,19 +76,19 @@ export function SeasonGrid({
                   return (
                     <td
                       key={w}
-                      className={`whitespace-nowrap px-3 py-2.5 text-center text-sm ${
+                      className={`whitespace-nowrap px-3 py-2.5 text-center font-body text-sm ${
                         score
                           ? attended
-                            ? "font-medium text-emerald-700"
-                            : "text-slate-400"
-                          : "text-slate-200"
+                            ? "font-bold text-crimson"
+                            : "text-secondary"
+                          : "text-[rgba(26,26,26,0.2)]"
                       }`}
                     >
                       {score ? Number(score.points) : "–"}
                     </td>
                   );
                 })}
-                <td className="whitespace-nowrap px-4 py-2.5 text-right text-sm font-bold text-indigo-600">
+                <td className="whitespace-nowrap px-5 py-2.5 text-right font-heading text-base font-bold text-ink">
                   {total}
                 </td>
               </tr>

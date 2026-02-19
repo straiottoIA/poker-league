@@ -71,45 +71,52 @@ export function PlayerList({ initialPlayers }: { initialPlayers: Player[] }) {
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
             placeholder="Nome do jogador"
-            className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            className="flex-1 border border-[rgba(26,26,26,0.2)] bg-white px-3 py-2.5 font-body text-sm text-ink placeholder:text-muted focus:border-ink focus:outline-none"
           />
           <button
             onClick={handleAdd}
             disabled={loading || !name.trim()}
-            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
+            className="bg-ink px-6 py-2.5 font-body text-[11px] font-bold uppercase tracking-[2px] text-canvas transition-colors hover:bg-crimson disabled:opacity-50"
           >
-            Adicionar
+            {loading ? "..." : "Adicionar"}
           </button>
         </div>
       ) : (
-        <p className="text-sm text-slate-500">
-          <Link href="/login" className="font-medium text-indigo-600 hover:underline">Faça login</Link> para gerenciar jogadores.
+        <p className="font-body text-sm text-secondary">
+          <Link href="/login" className="font-bold text-ink underline hover:text-crimson">
+            Faça login
+          </Link>{" "}
+          para gerenciar jogadores.
         </p>
       )}
 
       {error && (
-        <p className="rounded-lg border border-red-100 bg-red-50 px-4 py-2.5 text-sm text-red-600">{error}</p>
+        <p className="border border-crimson/20 bg-[rgba(229,57,53,0.05)] px-4 py-2.5 font-body text-sm text-crimson">
+          {error}
+        </p>
       )}
 
       {players.length === 0 ? (
-        <div className="rounded-xl border border-slate-200 bg-white px-6 py-10 text-center shadow-sm">
-          <p className="text-sm text-slate-400">Nenhum jogador cadastrado ainda.</p>
+        <div className="border border-[rgba(26,26,26,0.15)] bg-white px-8 py-12 text-center">
+          <p className="font-body text-sm text-muted">Nenhum jogador cadastrado ainda.</p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-          <ul className="divide-y divide-slate-100">
-            {players.map((player) => (
+        <div className="border border-[rgba(26,26,26,0.15)] bg-white">
+          <ul>
+            {players.map((player, i) => (
               <li
                 key={player.id}
-                className="flex items-center justify-between px-4 py-3 transition-colors hover:bg-slate-50"
+                className={`flex items-center justify-between px-5 py-3.5 transition-colors hover:bg-canvas/60 ${
+                  i < players.length - 1 ? "border-b border-[rgba(26,26,26,0.08)]" : ""
+                }`}
               >
-                <span className="text-sm font-medium text-slate-900">
+                <span className="font-body text-sm font-medium text-ink">
                   {player.name}
                 </span>
                 {isLoggedIn && (
                   <button
                     onClick={() => setPendingDeleteId(player.id)}
-                    className="text-xs font-medium text-slate-400 transition-colors hover:text-red-500"
+                    className="font-body text-[10px] font-bold uppercase tracking-[2px] text-muted transition-colors hover:text-crimson"
                   >
                     Remover
                   </button>

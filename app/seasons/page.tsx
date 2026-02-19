@@ -8,50 +8,62 @@ export default async function SeasonsPage() {
   const seasons = await getSeasons(supabase);
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">Temporadas</h1>
-        <p className="mt-1 text-sm text-slate-500">Gerencie as temporadas da liga.</p>
+    <div className="space-y-10">
+      {/* Header */}
+      <div className="border-b-2 border-ink pb-6">
+        <p className="font-body text-[11px] font-bold uppercase tracking-[5px] text-crimson">Liga</p>
+        <h1 className="mt-2 font-heading text-4xl font-bold text-ink">Temporadas</h1>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="mb-4 text-sm font-semibold text-slate-700">Nova Temporada</h2>
+      {/* Create season */}
+      <div>
+        <p className="mb-4 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
+          Nova Temporada
+        </p>
         <CreateSeasonForm />
       </div>
 
-      {seasons.length === 0 ? (
-        <div className="rounded-xl border border-slate-200 bg-white px-6 py-12 text-center shadow-sm">
-          <p className="text-sm text-slate-400">Nenhuma temporada criada ainda.</p>
-        </div>
-      ) : (
-        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-          <ul className="divide-y divide-slate-100">
-            {seasons.map((season) => (
-              <li
-                key={season.id}
-                className="flex items-center justify-between px-5 py-4 transition-colors hover:bg-slate-50"
-              >
-                <Link
-                  href={`/seasons/${season.id}`}
-                  className="text-sm font-semibold text-indigo-600 hover:text-indigo-800 hover:underline"
+      {/* Season list */}
+      <div>
+        <p className="mb-4 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
+          {seasons.length > 0 ? `${seasons.length} temporada${seasons.length !== 1 ? "s" : ""}` : "Histórico"}
+        </p>
+        {seasons.length === 0 ? (
+          <div className="border border-[rgba(26,26,26,0.15)] bg-white px-8 py-12 text-center">
+            <p className="font-body text-sm text-muted">Nenhuma temporada criada ainda.</p>
+          </div>
+        ) : (
+          <div className="border border-[rgba(26,26,26,0.15)] bg-white">
+            <ul>
+              {seasons.map((season, i) => (
+                <li
+                  key={season.id}
+                  className={`flex items-center justify-between px-5 py-4 transition-colors hover:bg-canvas/60 ${
+                    i < seasons.length - 1 ? "border-b border-[rgba(26,26,26,0.08)]" : ""
+                  }`}
                 >
-                  {season.name}
-                </Link>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-slate-400">
-                    {season.num_weeks} semanas
-                  </span>
-                  {season.is_active && (
-                    <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
-                      Ativa
+                  <Link
+                    href={`/seasons/${season.id}`}
+                    className="font-body text-sm font-semibold text-ink underline-offset-2 hover:text-crimson hover:underline"
+                  >
+                    {season.name}
+                  </Link>
+                  <div className="flex items-center gap-4">
+                    <span className="font-body text-[11px] text-muted">
+                      {season.num_weeks} semanas
                     </span>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+                    {season.is_active && (
+                      <span className="bg-crimson px-2 py-0.5 font-body text-[10px] font-bold uppercase tracking-[2px] text-white">
+                        Ativa
+                      </span>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

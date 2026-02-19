@@ -53,24 +53,26 @@ export function RosterManager({
   return (
     <div className="space-y-4">
       {error && (
-        <p className="rounded-lg border border-red-100 bg-red-50 px-4 py-2.5 text-sm text-red-600">{error}</p>
-      )}
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-slate-500">
-          {enrolledCount} de {allPlayers.length} jogador{allPlayers.length !== 1 ? "es" : ""} inscrito{enrolledCount !== 1 ? "s" : ""}.
+        <p className="border border-crimson/20 bg-[rgba(229,57,53,0.05)] px-4 py-2.5 font-body text-sm text-crimson">
+          {error}
         </p>
-      </div>
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <ul className="divide-y divide-slate-100">
-          {allPlayers.map((player) => {
+      )}
+
+      <p className="font-body text-[11px] font-bold uppercase tracking-[2px] text-muted">
+        {enrolledCount} de {allPlayers.length} inscrito{enrolledCount !== 1 ? "s" : ""}
+      </p>
+
+      <div className="border border-[rgba(26,26,26,0.15)] bg-white">
+        <ul>
+          {allPlayers.map((player, i) => {
             const isEnrolled = enrolledIds.has(player.id);
             const isLoading = loading === player.id;
             return (
               <li
                 key={player.id}
-                className={`flex items-center gap-3 px-4 py-3 transition-colors hover:bg-slate-50 ${
-                  isEnrolled ? "bg-indigo-50/40" : ""
-                }`}
+                className={`flex items-center gap-4 px-5 py-4 transition-colors hover:bg-canvas/60 ${
+                  i < allPlayers.length - 1 ? "border-b border-[rgba(26,26,26,0.08)]" : ""
+                } ${isEnrolled ? "bg-[rgba(229,57,53,0.03)]" : ""}`}
               >
                 <input
                   id={`roster-${player.id}`}
@@ -78,21 +80,21 @@ export function RosterManager({
                   checked={isEnrolled}
                   onChange={() => handleToggle(player.id)}
                   disabled={!isLoggedIn || isLoading}
-                  className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                  className="h-4 w-4 border-[rgba(26,26,26,0.3)] accent-crimson"
                 />
                 <label
                   htmlFor={`roster-${player.id}`}
-                  className={`flex-1 cursor-pointer text-sm font-medium ${
-                    isEnrolled ? "text-slate-900" : "text-slate-600"
+                  className={`flex-1 cursor-pointer font-body text-sm font-medium ${
+                    isEnrolled ? "text-ink" : "text-secondary"
                   }`}
                 >
                   {player.name}
                 </label>
                 {isLoading && (
-                  <span className="text-xs text-slate-400">salvando...</span>
+                  <span className="font-body text-[10px] text-muted">salvando...</span>
                 )}
                 {isEnrolled && !isLoading && (
-                  <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-semibold text-indigo-700">
+                  <span className="bg-crimson px-2 py-0.5 font-body text-[10px] font-bold uppercase tracking-[2px] text-white">
                     Inscrito
                   </span>
                 )}
@@ -101,9 +103,13 @@ export function RosterManager({
           })}
         </ul>
       </div>
+
       {!isLoggedIn && (
-        <p className="text-sm text-slate-500">
-          <Link href="/login" className="font-medium text-indigo-600 hover:underline">Faça login</Link> para gerenciar o elenco.
+        <p className="font-body text-sm text-secondary">
+          <Link href="/login" className="font-bold text-ink underline hover:text-crimson">
+            Faça login
+          </Link>{" "}
+          para gerenciar o elenco.
         </p>
       )}
     </div>

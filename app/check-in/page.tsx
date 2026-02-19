@@ -10,13 +10,13 @@ export default async function CheckInPage() {
 
   if (!season) {
     return (
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Check-in</h1>
-          <p className="mt-1 text-sm text-slate-500">Registre a presença dos jogadores.</p>
+      <div className="space-y-10">
+        <div className="border-b-2 border-ink pb-6">
+          <p className="font-body text-[11px] font-bold uppercase tracking-[5px] text-crimson">Presença</p>
+          <h1 className="mt-2 font-heading text-4xl font-bold text-ink">Check-in</h1>
         </div>
-        <div className="rounded-xl border border-slate-200 bg-white px-6 py-12 text-center shadow-sm">
-          <p className="text-sm text-slate-400">Nenhuma temporada ativa. Crie uma temporada para começar.</p>
+        <div className="border border-[rgba(26,26,26,0.15)] bg-white px-8 py-12 text-center">
+          <p className="font-body text-sm text-muted">Nenhuma temporada ativa. Crie uma temporada para começar.</p>
         </div>
       </div>
     );
@@ -29,10 +29,10 @@ export default async function CheckInPage() {
   ]);
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">Check-in</h1>
-        <p className="mt-1 text-sm text-slate-500">Registre a presença dos jogadores.</p>
+    <div className="space-y-10">
+      <div className="border-b-2 border-ink pb-6">
+        <p className="font-body text-[11px] font-bold uppercase tracking-[5px] text-crimson">Presença</p>
+        <h1 className="mt-2 font-heading text-4xl font-bold text-ink">Check-in</h1>
       </div>
       <CheckInForm
         seasonId={season.id}
