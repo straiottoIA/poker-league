@@ -30,7 +30,7 @@ export async function getWeekScores(
     .eq("week_number", weekNumber);
   if (error) throw error;
 
-  return (data as RawScoreRow[]).map((s) => ({
+  return (data as unknown as RawScoreRow[]).map((s) => ({
     player_id: s.player_id,
     player_name: extractPlayerName(s, "getWeekScores"),
     points: s.points,
@@ -75,7 +75,7 @@ export async function getLeaderboard(
     { name: string; totalPoints: number; weeksAttended: number }
   >();
 
-  for (const row of data as RawScoreRow[]) {
+  for (const row of data as unknown as RawScoreRow[]) {
     const existing = playerMap.get(row.player_id) ?? {
       name: extractPlayerName(row, "getLeaderboard"),
       totalPoints: 0,

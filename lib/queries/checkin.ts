@@ -62,7 +62,7 @@ export async function getCheckedInPlayers(
     .eq("attended", true);
   if (error) throw error;
 
-  return (data as RawCheckinRow[]).map((row) => {
+  return (data as unknown as RawCheckinRow[]).map((row) => {
     if (!row.players) throw new Error(`Dados do jogador ausentes no check-in para player_id ${row.player_id}`);
     return {
       player_id: row.player_id,

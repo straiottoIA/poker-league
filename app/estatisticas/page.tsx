@@ -45,7 +45,7 @@ export default async function EstatisticasPage() {
 
   for (const score of scores) {
     const pid = score.player_id as string;
-    const name = (score.players as { name: string }).name;
+    const name = (score.players as unknown as { name: string }).name;
     const existing = playerMap.get(pid) ?? {
       name,
       points: 0,
@@ -76,7 +76,7 @@ export default async function EstatisticasPage() {
     const perPlayer = new Map<string, { name: string; points: number }>();
     for (const s of seasonScores) {
       const pid = s.player_id as string;
-      const name = (s.players as { name: string }).name;
+      const name = (s.players as unknown as { name: string }).name;
       const cur = perPlayer.get(pid) ?? { name, points: 0 };
       cur.points += s.points as number;
       perPlayer.set(pid, cur);

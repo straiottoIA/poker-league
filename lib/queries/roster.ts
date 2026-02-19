@@ -16,7 +16,7 @@ export async function getSeasonPlayers(
     .eq("season_id", seasonId);
   if (error) throw error;
 
-  return (data as RawSeasonPlayer[])
+  return (data as unknown as RawSeasonPlayer[])
     .map((sp) => {
       if (!sp.players) throw new Error(`Dados do jogador ausentes para season_player ${sp.player_id}`);
       return sp.players;
