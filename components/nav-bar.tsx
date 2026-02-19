@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/lib/supabase/use-auth";
@@ -18,6 +19,12 @@ export function NavBar() {
   const pathname = usePathname();
   const router = useRouter();
   const { isLoggedIn } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Fecha o menu ao navegar
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
 
   const handleLogout = async () => {
     const supabase = createClient();
@@ -28,42 +35,46 @@ export function NavBar() {
   return (
     <nav className="border-b-2 border-ink bg-canvas">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
+        {/* Barra principal */}
         <div className="flex h-16 items-center gap-4">
           {/* Logo */}
           <Link href="/" className="shrink-0 font-heading text-2xl font-bold tracking-[3px]">
             TTP<em className="not-italic text-crimson">F</em>
           </Link>
 
-          {/* Nav links — scrollable on mobile, no scrollbar visible */}
-          <div className="scrollbar-hide flex-1 overflow-x-auto">
-            <div className="flex min-w-max items-center gap-6 px-1">
-              {links.map((link) => {
-                const isActive = pathname.startsWith(link.href);
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    aria-current={isActive ? "page" : undefined}
-                    className={`font-body text-[11px] font-bold uppercase tracking-[2px] transition-colors ${
-                      isActive ? "text-crimson" : "text-ink hover:text-crimson"
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-                );
-              })}
-            </div>
+          {/* Links desktop */}
+          <div className="hidden flex-1 items-center gap-6 sm:flex">
+            {links.map((link) => {
+              const isActive = pathname.startsWith(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`font-body text-[11px] font-bold uppercase tracking-[2px] transition-colors ${
+                    isActive ? "text-crimson" : "text-ink hover:text-crimson"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </div>
 
-          {/* Auth + Theme toggle */}
+          {/* Espaço no mobile */}
+          <div className="flex-1 sm:hidden" />
+
+          {/* Auth + Theme + botão mobile */}
           <div className="flex shrink-0 items-center gap-4">
             <ThemeToggle />
+
+            {/* Auth — visível só no desktop */}
             {isLoggedIn ? (
               <>
                 <Link
                   href="/perfil"
                   aria-current={pathname === "/perfil" ? "page" : undefined}
-                  className={`font-body text-[11px] font-bold uppercase tracking-[2px] transition-colors ${
+                  className={`hidden font-body text-[11px] font-bold uppercase tracking-[2px] transition-colors sm:block ${
                     pathname === "/perfil" ? "text-crimson" : "text-ink hover:text-crimson"
                   }`}
                 >
@@ -71,7 +82,7 @@ export function NavBar() {
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="font-body text-[11px] font-bold uppercase tracking-[2px] text-secondary transition-colors hover:text-ink"
+                  className="hidden font-body text-[11px] font-bold uppercase tracking-[2px] text-secondary transition-colors hover:text-ink sm:block"
                 >
                   Sair
                 </button>
@@ -79,14 +90,87 @@ export function NavBar() {
             ) : (
               <Link
                 href="/login"
-                className="bg-ink px-5 py-2 font-body text-[11px] font-bold uppercase tracking-[2px] text-canvas transition-colors hover:bg-crimson"
+                className="hidden bg-ink px-5 py-2 font-body text-[11px] font-bold uppercase tracking-[2px] text-canvas transition-colors hover:bg-crimson sm:block"
               >
                 Login
               </Link>
             )}
+
+            {/* Botão de menu mobile (seta) */}
+            <button
+              onClick={() => setMenuOpen((o) => !o)}
+              aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
+              className="flex items-center justify-center sm:hidden"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className={`h-5 w-5 text-ink transition-transform duration-200 ${menuOpen ? "rotate-180" : ""}`}
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Dropdown mobile */}
+      {menuOpen && (
+        <div className="border-t border-border-strong bg-canvas sm:hidden">
+          <div className="mx-auto max-w-5xl divide-y divide-border-subtle px-4">
+            {links.map((link) => {
+              const isActive = pathname.startsWith(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`flex items-center gap-2 py-4 font-body text-[11px] font-bold uppercase tracking-[2px] transition-colors ${
+                    isActive ? "text-crimson" : "text-ink hover:text-crimson"
+                  }`}
+                >
+                  {isActive && <span className="text-crimson">▸</span>}
+                  {link.label}
+                </Link>
+              );
+            })}
+
+            {/* Auth no mobile */}
+            <div className="py-4">
+              {isLoggedIn ? (
+                <div className="flex items-center gap-6">
+                  <Link
+                    href="/perfil"
+                    className={`font-body text-[11px] font-bold uppercase tracking-[2px] transition-colors ${
+                      pathname === "/perfil" ? "text-crimson" : "text-ink hover:text-crimson"
+                    }`}
+                  >
+                    Perfil
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="font-body text-[11px] font-bold uppercase tracking-[2px] text-secondary transition-colors hover:text-ink"
+                  >
+                    Sair
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  className="inline-block bg-ink px-5 py-2 font-body text-[11px] font-bold uppercase tracking-[2px] text-canvas transition-colors hover:bg-crimson"
+                >
+                  Login
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

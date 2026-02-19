@@ -2,6 +2,16 @@ import { createClient } from "@/lib/supabase/server";
 import { getHallOfFame } from "@/lib/queries/hall-of-fame";
 import type { HallEntry } from "@/lib/queries/hall-of-fame";
 
+function toRoman(n: number): string {
+  const vals = [1000,900,500,400,100,90,50,40,10,9,5,4,1];
+  const syms = ["M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"];
+  let result = "";
+  for (let i = 0; i < vals.length; i++) {
+    while (n >= vals[i]) { result += syms[i]; n -= vals[i]; }
+  }
+  return result;
+}
+
 interface ChampionCount {
   name: string;
   titles: number;
@@ -101,7 +111,7 @@ export default async function HallDaFamaPage() {
                 >
                   <td className="px-5 py-3.5">
                     <span className="font-heading text-base font-bold text-crimson">
-                      T{e.season_number}
+                      {toRoman(e.season_number)}
                     </span>
                   </td>
                   <td className="px-5 py-3.5 font-body text-sm font-semibold text-ink">
