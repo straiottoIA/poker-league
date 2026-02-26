@@ -1,11 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
-import { getSeasons } from "@/lib/queries/seasons";
+import { getSeasonsWithCount } from "@/lib/queries/seasons";
 import Link from "next/link";
 import { CreateSeasonForm } from "./create-season-form";
 
 export default async function SeasonsPage() {
   const supabase = await createClient();
-  const seasons = await getSeasons(supabase);
+  const seasons = await getSeasonsWithCount(supabase);
 
   return (
     <div className="space-y-10">
@@ -50,7 +50,7 @@ export default async function SeasonsPage() {
                   </Link>
                   <div className="flex items-center gap-4">
                     <span className="font-body text-[11px] text-muted">
-                      {season.num_weeks} semanas
+                      {season.player_count} jogadores · {season.num_weeks} semanas
                     </span>
                     {season.is_active && (
                       <span className="bg-crimson px-2 py-0.5 font-body text-[10px] font-bold uppercase tracking-[2px] text-white">

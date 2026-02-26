@@ -34,6 +34,9 @@ export function SeasonGrid({
       <table className="min-w-full">
         <thead>
           <tr className="border-b border-border-strong bg-canvas">
+            <th className="w-8 px-3 py-3 text-center font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
+              #
+            </th>
             <th className="sticky left-0 z-10 bg-canvas px-5 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
               Jogador
             </th>
@@ -56,17 +59,23 @@ export function SeasonGrid({
           </tr>
         </thead>
         <tbody>
-          {players.map((player) => {
-            const total = weeks.reduce((sum, w) => {
-              const score = scoreMap.get(`${player.id}-${w}`);
-              return sum + (score ? Number(score.points) : 0);
-            }, 0);
-
-            return (
+          {players
+            .map((player) => ({
+              player,
+              total: weeks.reduce((sum, w) => {
+                const score = scoreMap.get(`${player.id}-${w}`);
+                return sum + (score ? Number(score.points) : 0);
+              }, 0),
+            }))
+            .sort((a, b) => b.total - a.total)
+            .map(({ player, total }, i) => (
               <tr
                 key={player.id}
                 className="border-b border-border-subtle transition-colors hover:bg-canvas/40"
               >
+                <td className="w-8 px-3 py-2.5 text-center font-body text-xs text-muted">
+                  {i + 1}
+                </td>
                 <td className="sticky left-0 z-10 bg-surface whitespace-nowrap px-5 py-2.5 font-body text-sm font-medium text-ink">
                   {player.name}
                 </td>
@@ -84,16 +93,15 @@ export function SeasonGrid({
                           : "text-muted/40"
                       }`}
                     >
-                      {score ? Number(score.points) : "–"}
+                      {score ? +parseFloat(Number(score.points).toFixed(2)) : "–"}
                     </td>
                   );
                 })}
                 <td className="whitespace-nowrap px-5 py-2.5 text-right font-heading text-base font-bold text-ink">
-                  {total}
+                  {+parseFloat(total.toFixed(2))}
                 </td>
               </tr>
-            );
-          })}
+            ))}
         </tbody>
       </table>
     </div>

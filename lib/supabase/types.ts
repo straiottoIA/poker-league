@@ -6,6 +6,10 @@ export interface Season {
   created_at: string;
 }
 
+export interface SeasonWithCount extends Season {
+  player_count: number;
+}
+
 export interface Player {
   id: string;
   name: string;

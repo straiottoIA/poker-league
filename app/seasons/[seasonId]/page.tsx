@@ -25,6 +25,14 @@ export default async function SeasonDashboard({
     <div className="space-y-10">
       {/* Dark header panel */}
       <div className="-mx-4 -mt-10 bg-panel px-4 py-12 sm:-mx-6 sm:px-6">
+        <div className="mb-6">
+          <Link
+            href="/seasons"
+            className="font-body text-[11px] font-bold uppercase tracking-[2px] text-white/40 transition-colors hover:text-white"
+          >
+            ← Temporadas
+          </Link>
+        </div>
         <div className="flex items-end justify-between gap-6">
           <div>
             <p className="font-body text-[11px] font-bold uppercase tracking-[5px] text-crimson">

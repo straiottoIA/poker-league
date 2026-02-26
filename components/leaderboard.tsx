@@ -46,7 +46,7 @@ export function Leaderboard({ entries }: { entries: LeaderboardEntry[] }) {
                 {entry.player_name}
               </td>
               <td className="px-5 py-3.5 text-right font-heading text-lg font-bold text-crimson">
-                {entry.total_points}
+                {+parseFloat(Number(entry.total_points).toFixed(2))}
               </td>
               <td className="px-5 py-3.5 text-right font-body text-sm text-muted">
                 {entry.weeks_attended}

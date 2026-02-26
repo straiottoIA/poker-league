@@ -33,6 +33,9 @@ export default async function CheckInPage() {
       <div className="border-b-2 border-ink pb-6">
         <p className="font-body text-[11px] font-bold uppercase tracking-[5px] text-crimson">Presença</p>
         <h1 className="mt-2 font-heading text-4xl font-bold text-ink">Check-in</h1>
+        <p className="mt-2 font-body text-sm text-secondary">
+          Temporada {season.name} · Semana {weekNumber}
+        </p>
       </div>
       <CheckInForm
         seasonId={season.id}

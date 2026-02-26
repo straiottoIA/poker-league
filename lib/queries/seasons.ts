@@ -1,5 +1,5 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-import { Season } from "@/lib/supabase/types";
+import { Season, SeasonWithCount } from "@/lib/supabase/types";
 
 export async function getSeasons(
   supabase: SupabaseClient
@@ -7,6 +7,7 @@ export async function getSeasons(
   const { data, error } = await supabase
     .from("seasons")
     .select("*")
+    .order("is_active", { ascending: false })
     .order("created_at", { ascending: false });
   if (error) throw error;
   return data ?? [];
@@ -54,6 +55,25 @@ export async function deleteSeason(
 ): Promise<void> {
   const { error } = await supabase.from("seasons").delete().eq("id", id);
   if (error) throw error;
+}
+
+type RawSeasonWithCount = Season & {
+  season_players: { count: number }[];
+};
+
+export async function getSeasonsWithCount(
+  supabase: SupabaseClient
+): Promise<SeasonWithCount[]> {
+  const { data, error } = await supabase
+    .from("seasons")
+    .select("*, season_players(count)")
+    .order("is_active", { ascending: false })
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data as unknown as RawSeasonWithCount[]).map((s) => ({
+    ...s,
+    player_count: s.season_players[0]?.count ?? 0,
+  }));
 }
 
 export async function getActiveSeason(
