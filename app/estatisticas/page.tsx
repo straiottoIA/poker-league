@@ -76,7 +76,8 @@ export default async function EstatisticasPage() {
               className={`border-b border-border-subtle transition-colors hover:bg-canvas/60 ${
                 i === 0 ? "bg-tint-crimson-row" : ""
               }`}
-            >              <td className="px-4 py-3.5">
+            >
+              <td className="px-4 py-3.5">
                 {i < 3 ? (
                   <span className="bg-crimson px-1.5 py-0.5 font-body text-[10px] font-bold text-white">
                     {i + 1}°
