@@ -46,3 +46,27 @@ export interface WeekScore {
   points: number;
   attended: boolean;
 }
+
+export interface AllTimePlayerStat {
+  player_id: string;
+  player_name: string;
+  total_points: number;
+  weeks_attended: number;
+  total_weeks: number;
+  attendance_pct: number;
+  seasons_played: number;
+  wins: number;
+  podiums: number;
+  avg_points: number;
+}
+
+export interface SeasonSummary {
+  season_id: string;
+  season_name: string;
+  is_active: boolean;
+  num_weeks: number;
+  weeks_played: number;
+  total_attendances: number;
+  top_player: string | null;
+  top_points: number;
+}
