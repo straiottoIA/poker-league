@@ -1,6 +1,26 @@
 "use client";
+import { useState } from "react";
 import { PaginatedTable } from "@/components/paginated-table";
 import type { AllTimePlayerStat, SeasonSummary, Season } from "@/lib/supabase/types";
+
+type SortKey =
+  | "total_points"
+  | "wins"
+  | "podiums"
+  | "weeks_attended"
+  | "attendance_pct"
+  | "avg_points";
+
+const SORT_LABELS: Record<SortKey, string> = {
+  total_points: "Pontos",
+  wins: "Vitórias",
+  podiums: "Pódios",
+  weeks_attended: "Presenças",
+  attendance_pct: "% Pres.",
+  avg_points: "Média",
+};
+
+const SORT_KEYS = Object.keys(SORT_LABELS) as SortKey[];
 
 interface StatsContentProps {
   allTimeStats: AllTimePlayerStat[];
@@ -21,6 +41,23 @@ export function StatsContent({
   totalAttendances,
   totalWeeksPlayed,
 }: StatsContentProps) {
+  const [sortKey, setSortKey] = useState<SortKey>("total_points");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+
+  const sorted = [...allTimeStats].sort((a, b) => {
+    const diff = a[sortKey] - b[sortKey];
+    return sortDir === "desc" ? -diff : diff;
+  });
+
+  function handleSort(key: SortKey) {
+    if (key === sortKey) {
+      setSortDir((d) => (d === "desc" ? "asc" : "desc"));
+    } else {
+      setSortKey(key);
+      setSortDir("desc");
+    }
+  }
+
   return (
     <div className="space-y-12">
       {/* Header */}
@@ -61,20 +98,49 @@ export function StatsContent({
           <span className="font-body text-[10px] font-bold text-crimson">♠</span>
           <h2 className="font-heading text-2xl font-bold text-ink">Ranking All-Time</h2>
         </div>
+        {/* Pills de ordenação */}
+        <div className="mb-4 flex items-center gap-2 overflow-x-auto pb-1">
+          <span className="shrink-0 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
+            Ordenar por:
+          </span>
+          {SORT_KEYS.map((key) => {
+            const active = key === sortKey;
+            return (
+              <button
+                key={key}
+                onClick={() => handleSort(key)}
+                className={`shrink-0 flex items-center gap-1 px-3 py-1 font-body text-[11px] font-bold transition-colors ${
+                  active
+                    ? "bg-crimson text-white"
+                    : "border border-border-subtle text-muted hover:border-crimson hover:text-crimson"
+                }`}
+              >
+                {SORT_LABELS[key]}
+                {active && (
+                  <span className="text-[10px]">
+                    {sortDir === "desc" ? "▼" : "▲"}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+        {/* key forces remount → resets pagination to page 1 on sort change */}
         <PaginatedTable<AllTimePlayerStat>
-          data={allTimeStats}
+          key={`${sortKey}-${sortDir}`}
+          data={sorted}
           pageSize={10}
           emptyMessage="Nenhuma pontuação registrada ainda."
           renderHeader={() => (
             <tr className="border-b border-border-strong bg-canvas">
               <th className="px-4 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">#</th>
               <th className="px-4 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Jogador</th>
-              <th className="px-4 py-3 text-right font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Pontos</th>
-              <th className="px-4 py-3 text-right font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Vitórias</th>
-              <th className="px-4 py-3 text-right font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Pódios</th>
-              <th className="px-4 py-3 text-right font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Presenças</th>
-              <th className="px-4 py-3 text-right font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">% Pres.</th>
-              <th className="px-4 py-3 text-right font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Média</th>
+              <SortableHeader sortKeyVal="total_points" currentSortKey={sortKey} currentSortDir={sortDir} onSort={handleSort} />
+              <SortableHeader sortKeyVal="wins" currentSortKey={sortKey} currentSortDir={sortDir} onSort={handleSort} />
+              <SortableHeader sortKeyVal="podiums" currentSortKey={sortKey} currentSortDir={sortDir} onSort={handleSort} />
+              <SortableHeader sortKeyVal="weeks_attended" currentSortKey={sortKey} currentSortDir={sortDir} onSort={handleSort} />
+              <SortableHeader sortKeyVal="attendance_pct" currentSortKey={sortKey} currentSortDir={sortDir} onSort={handleSort} />
+              <SortableHeader sortKeyVal="avg_points" currentSortKey={sortKey} currentSortDir={sortDir} onSort={handleSort} />
             </tr>
           )}
           renderRow={(entry, i) => (
@@ -175,6 +241,38 @@ export function StatsContent({
         />
       </section>
     </div>
+  );
+}
+
+function SortableHeader({
+  sortKeyVal,
+  currentSortKey,
+  currentSortDir,
+  onSort,
+}: {
+  sortKeyVal: SortKey;
+  currentSortKey: SortKey;
+  currentSortDir: "asc" | "desc";
+  onSort: (key: SortKey) => void;
+}) {
+  const active = sortKeyVal === currentSortKey;
+  return (
+    <th
+      className="px-4 py-3 text-right font-body text-[10px] font-bold uppercase tracking-[2px] text-muted group"
+      aria-sort={active ? (currentSortDir === "desc" ? "descending" : "ascending") : "none"}
+    >
+      <button
+        onClick={() => onSort(sortKeyVal)}
+        className="flex w-full cursor-pointer items-center justify-end gap-1 transition-colors hover:text-crimson"
+      >
+        {SORT_LABELS[sortKeyVal]}
+        <span
+          className={`text-[10px] ${active ? "text-crimson" : "opacity-0 group-hover:opacity-100"}`}
+        >
+          {active ? (currentSortDir === "desc" ? "▼" : "▲") : "↕"}
+        </span>
+      </button>
+    </th>
   );
 }
 
