@@ -132,6 +132,19 @@ lines.push('INSERT INTO season_players (id, season_id, player_id) VALUES');
 lines.push(spRows.join(',\n') + ';');
 lines.push('');
 
+// Pré-computar: quais temporadas têm dados semanais?
+// Necessário porque jogadores ausentes na semana 1 têm row['1'] = null (defval),
+// o que não significa que a temporada não tem colunas semanais — apenas que o jogador faltou.
+const hasWeekDataBySeason = new Map(); // snum → boolean
+for (const [snum, srows] of bySeasonRows) {
+  const hasWeek = srows.some(row =>
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].some(w =>
+      row[String(w)] !== null && row[String(w)] !== undefined
+    )
+  );
+  hasWeekDataBySeason.set(snum, hasWeek);
+}
+
 // SCORES — deduplicado por (season_id, player_id, week_number)
 // Em caso de conflito, soma os pontos (dois registros de nomes diferentes que viraram o mesmo jogador)
 lines.push('-- ============================================================');
@@ -151,7 +164,7 @@ for (const row of rows) {
   const sid = seasonMap.get(snum).id;
   const pid = playerMap.get(name);
   const nw = seasonMap.get(snum).num_weeks;
-  const hasWeekData = row['1'] !== null && row['1'] !== undefined;
+  const hasWeekData = hasWeekDataBySeason.get(snum) ?? false;
 
   if (!hasWeekData) {
     const pts = parseFloat(row['Pont_final'] ?? 0) || 0;
