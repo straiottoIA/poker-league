@@ -1,0 +1,596 @@
+# Stats Charts Implementation Plan
+
+> **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+
+**Goal:** Adicionar 3 gráficos (Chart.js) intercalados na página de Estatísticas — Top Pontos, Títulos de Temporada e Presenças por Temporada.
+
+**Architecture:** Tudo dentro de `app/estatisticas/stats-content.tsx` (já é client component). Chart.js registrado no nível do módulo, cores adaptadas via `useTheme()`.
+
+**Tech Stack:** chart.js, react-chartjs-2, next-themes (já instalado), Tailwind CSS 4
+
+---
+
+### Task 1: Instalar dependências
+
+**Files:**
+- Modify: `package.json` (via npm)
+
+**Step 1: Instalar chart.js e react-chartjs-2**
+
+```bash
+cd "C:/Users/User/poker-league"
+npm install chart.js react-chartjs-2
+```
+
+Expected output: `added N packages` sem erros.
+
+**Step 2: Verificar build**
+
+```bash
+npm run build
+```
+
+Expected: build limpo (✓ Compiled successfully).
+
+**Step 3: Commit**
+
+```bash
+git add package.json package-lock.json
+git commit -m "feat: install chart.js and react-chartjs-2"
+```
+
+---
+
+### Task 2: Adicionar os 3 gráficos ao StatsContent
+
+**Files:**
+- Modify: `app/estatisticas/stats-content.tsx`
+
+Este é o arquivo principal. A edição consiste em:
+1. Adicionar imports
+2. Registrar módulos Chart.js no nível do módulo
+3. Adicionar hook `useTheme` dentro do componente
+4. Inserir 3 seções de gráfico no JSX
+
+**Step 1: Substituir o arquivo completo pelo código abaixo**
+
+Arquivo final `app/estatisticas/stats-content.tsx`:
+
+```tsx
+"use client";
+import { useState } from "react";
+import { useTheme } from "next-themes";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Tooltip,
+  type ChartOptions,
+} from "chart.js";
+import { Bar } from "react-chartjs-2";
+import { PaginatedTable } from "@/components/paginated-table";
+import type { AllTimePlayerStat, SeasonSummary, Season } from "@/lib/supabase/types";
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
+
+type SortKey =
+  | "total_points"
+  | "season_wins"
+  | "week_wins"
+  | "podiums"
+  | "weeks_attended"
+  | "attendance_pct"
+  | "avg_points";
+
+const SORT_LABELS: Record<SortKey, string> = {
+  total_points: "Pontos",
+  season_wins: "Vit. Temp.",
+  week_wins: "Vit. Etapa",
+  podiums: "Pódios",
+  weeks_attended: "Presenças",
+  attendance_pct: "% Pres.",
+  avg_points: "Média",
+};
+
+const SORT_KEYS = Object.keys(SORT_LABELS) as SortKey[];
+
+const CRIMSON = "#e53935";
+const BAR_COLORS = [
+  CRIMSON,
+  "rgba(229,57,53,0.75)",
+  "rgba(229,57,53,0.55)",
+];
+const BAR_REST = "rgba(229,57,53,0.30)";
+
+function barColors(length: number): string[] {
+  return Array.from({ length }, (_, i) => BAR_COLORS[i] ?? BAR_REST);
+}
+
+interface StatsContentProps {
+  allTimeStats: AllTimePlayerStat[];
+  seasonSummaries: SeasonSummary[];
+  activeSeason: Season | null;
+  seasonsCount: number;
+  playersCount: number;
+  totalAttendances: number;
+  totalWeeksPlayed: number;
+}
+
+export function StatsContent({
+  allTimeStats,
+  seasonSummaries,
+  activeSeason,
+  seasonsCount,
+  playersCount,
+  totalAttendances,
+  totalWeeksPlayed,
+}: StatsContentProps) {
+  const [sortKey, setSortKey] = useState<SortKey>("total_points");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
+
+  const tickColor = isDark ? "#8a8a8a" : "#999999";
+  const gridColor = isDark
+    ? "rgba(240,235,228,0.07)"
+    : "rgba(26,26,26,0.08)";
+
+  const sorted = [...allTimeStats].sort((a, b) => {
+    const diff = a[sortKey] - b[sortKey];
+    return sortDir === "desc" ? -diff : diff;
+  });
+
+  function handleSort(key: SortKey) {
+    if (key === sortKey) {
+      setSortDir((d) => (d === "desc" ? "asc" : "desc"));
+    } else {
+      setSortKey(key);
+      setSortDir("desc");
+    }
+  }
+
+  // ── Chart data ──────────────────────────────────────────────────
+
+  // Gráfico 1: Top 10 por pontos
+  const top10Points = [...allTimeStats]
+    .sort((a, b) => b.total_points - a.total_points)
+    .slice(0, 10);
+
+  const topPointsData = {
+    labels: top10Points.map((s) => s.player_name),
+    datasets: [
+      {
+        data: top10Points.map((s) => s.total_points),
+        backgroundColor: barColors(top10Points.length),
+        borderRadius: 2,
+        borderSkipped: false,
+      },
+    ],
+  };
+
+  // Gráfico 2: Títulos de temporada (season_wins > 0)
+  const withTitles = [...allTimeStats]
+    .filter((s) => s.season_wins > 0)
+    .sort((a, b) => b.season_wins - a.season_wins);
+
+  const titlesData = {
+    labels: withTitles.map((s) => s.player_name),
+    datasets: [
+      {
+        data: withTitles.map((s) => s.season_wins),
+        backgroundColor: barColors(withTitles.length),
+        borderRadius: 2,
+        borderSkipped: false,
+      },
+    ],
+  };
+
+  // Gráfico 3: Presenças por temporada (ordem cronológica = inverso da lista)
+  const seasonChronological = [...seasonSummaries].reverse();
+  const attendanceData = {
+    labels: seasonChronological.map((s) =>
+      s.season_name.replace("Temporada ", "")
+    ),
+    datasets: [
+      {
+        data: seasonChronological.map((s) => s.total_attendances),
+        backgroundColor: seasonChronological.map((s) =>
+          s.is_active ? "rgba(229,57,53,0.45)" : CRIMSON
+        ),
+        borderRadius: 2,
+        borderSkipped: false,
+      },
+    ],
+  };
+
+  // ── Chart options ────────────────────────────────────────────────
+
+  const hBarOptions: ChartOptions<"bar"> = {
+    indexAxis: "y",
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => `  ${ctx.parsed.x}`,
+        },
+      },
+    },
+    scales: {
+      x: {
+        grid: { color: gridColor },
+        ticks: {
+          color: tickColor,
+          font: { family: "DM Sans, sans-serif", size: 11 },
+        },
+      },
+      y: {
+        grid: { display: false },
+        ticks: {
+          color: tickColor,
+          font: { family: "DM Sans, sans-serif", size: 11 },
+        },
+      },
+    },
+  };
+
+  const vBarOptions: ChartOptions<"bar"> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => `  ${ctx.parsed.y} presenças`,
+        },
+      },
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: {
+          color: tickColor,
+          font: { family: "DM Sans, sans-serif", size: 10 },
+          maxRotation: 45,
+        },
+      },
+      y: {
+        grid: { color: gridColor },
+        ticks: {
+          color: tickColor,
+          font: { family: "DM Sans, sans-serif", size: 11 },
+        },
+      },
+    },
+  };
+
+  return (
+    <div className="space-y-12">
+      {/* Header */}
+      <div className="border-b-2 border-ink pb-6">
+        <p className="font-body text-[11px] font-bold uppercase tracking-[5px] text-crimson">Liga</p>
+        <h1 className="mt-2 font-heading text-4xl font-bold text-ink">Estatísticas</h1>
+      </div>
+
+      {/* Visão Geral */}
+      <section>
+        <p className="mb-4 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
+          Visão Geral
+        </p>
+        <div className="grid grid-cols-2 border border-border-strong bg-surface sm:grid-cols-4">
+          <StatBar label="Temporadas" value={seasonsCount} />
+          <StatBar label="Jogadores" value={playersCount} />
+          <StatBar label="Semanas" value={totalWeeksPlayed} />
+          <StatBar label="Presenças" value={totalAttendances} last />
+        </div>
+        {activeSeason && (
+          <div className="mt-4 flex items-center justify-between border border-border-subtle border-l-4 border-l-crimson bg-surface px-6 py-4">
+            <div>
+              <p className="font-body text-[10px] font-bold uppercase tracking-[3px] text-crimson">
+                Temporada Ativa
+              </p>
+              <p className="mt-1 font-heading text-xl font-bold text-ink">{activeSeason.name}</p>
+            </div>
+            <span className="bg-crimson px-3 py-1 font-body text-[10px] font-bold uppercase tracking-[2px] text-white">
+              {activeSeason.num_weeks} sem.
+            </span>
+          </div>
+        )}
+      </section>
+
+      {/* ── GRÁFICO 1: Top Jogadores por Pontos ── */}
+      {top10Points.length > 0 && (
+        <section>
+          <div className="mb-4 flex items-center gap-3 border-b border-border-subtle pb-3">
+            <span className="font-body text-[10px] font-bold text-crimson">♦</span>
+            <h2 className="font-heading text-2xl font-bold text-ink">Top Jogadores — Pontos</h2>
+          </div>
+          <div className="bg-surface border border-border-subtle p-5">
+            <p className="mb-4 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
+              Top 10 por pontuação acumulada all-time
+            </p>
+            <div style={{ height: `${Math.max(220, top10Points.length * 36)}px` }}>
+              <Bar data={topPointsData} options={hBarOptions} />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Ranking All-Time */}
+      <section>
+        <div className="mb-4 flex items-center gap-3 border-b border-border-subtle pb-3">
+          <span className="font-body text-[10px] font-bold text-crimson">♠</span>
+          <h2 className="font-heading text-2xl font-bold text-ink">Ranking All-Time</h2>
+        </div>
+        {/* Pills de ordenação */}
+        <div className="mb-4 flex items-center gap-2 overflow-x-auto pb-1">
+          <span className="shrink-0 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
+            Ordenar por:
+          </span>
+          {SORT_KEYS.map((key) => {
+            const active = key === sortKey;
+            return (
+              <button
+                key={key}
+                onClick={() => handleSort(key)}
+                className={`shrink-0 flex items-center gap-1 px-3 py-1 font-body text-[11px] font-bold transition-colors ${
+                  active
+                    ? "bg-crimson text-white"
+                    : "border border-border-subtle text-muted hover:border-crimson hover:text-crimson"
+                }`}
+              >
+                {SORT_LABELS[key]}
+                {active && (
+                  <span className="text-[10px]">
+                    {sortDir === "desc" ? "▼" : "▲"}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+        <PaginatedTable<AllTimePlayerStat>
+          key={`${sortKey}-${sortDir}`}
+          data={sorted}
+          pageSize={10}
+          emptyMessage="Nenhuma pontuação registrada ainda."
+          renderHeader={() => (
+            <tr className="border-b border-border-strong bg-canvas">
+              <th className="px-4 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">#</th>
+              <th className="px-4 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Jogador</th>
+              <SortableHeader sortKeyVal="total_points" currentSortKey={sortKey} currentSortDir={sortDir} onSort={handleSort} />
+              <SortableHeader sortKeyVal="season_wins" currentSortKey={sortKey} currentSortDir={sortDir} onSort={handleSort} />
+              <SortableHeader sortKeyVal="week_wins" currentSortKey={sortKey} currentSortDir={sortDir} onSort={handleSort} />
+              <SortableHeader sortKeyVal="podiums" currentSortKey={sortKey} currentSortDir={sortDir} onSort={handleSort} />
+              <SortableHeader sortKeyVal="weeks_attended" currentSortKey={sortKey} currentSortDir={sortDir} onSort={handleSort} />
+              <SortableHeader sortKeyVal="attendance_pct" currentSortKey={sortKey} currentSortDir={sortDir} onSort={handleSort} />
+              <SortableHeader sortKeyVal="avg_points" currentSortKey={sortKey} currentSortDir={sortDir} onSort={handleSort} />
+            </tr>
+          )}
+          renderRow={(entry, i) => (
+            <tr
+              key={entry.player_id}
+              className={`border-b border-border-subtle transition-colors hover:bg-canvas/60 ${
+                i === 0 ? "bg-tint-crimson-row" : ""
+              }`}
+            >
+              <td className="px-4 py-3.5">
+                {i < 3 ? (
+                  <span className="bg-crimson px-1.5 py-0.5 font-body text-[10px] font-bold text-white">
+                    {i + 1}°
+                  </span>
+                ) : (
+                  <span className="font-body text-sm text-muted">{i + 1}</span>
+                )}
+              </td>
+              <td className="px-4 py-3.5 font-body text-sm font-medium text-ink">
+                {entry.player_name}
+              </td>
+              <td className="px-4 py-3.5 text-right font-heading text-lg font-bold text-crimson">
+                {entry.total_points}
+              </td>
+              <td className="px-4 py-3.5 text-right font-body text-sm text-secondary">
+                {entry.season_wins}
+              </td>
+              <td className="px-4 py-3.5 text-right font-body text-sm text-secondary">
+                {entry.week_wins}
+              </td>
+              <td className="px-4 py-3.5 text-right font-body text-sm text-secondary">
+                {entry.podiums}
+              </td>
+              <td className="px-4 py-3.5 text-right font-body text-sm text-muted">
+                {entry.weeks_attended}
+              </td>
+              <td className="px-4 py-3.5 text-right font-body text-sm text-muted">
+                {entry.attendance_pct}%
+              </td>
+              <td className="px-4 py-3.5 text-right font-body text-sm text-muted">
+                {entry.avg_points}
+              </td>
+            </tr>
+          )}
+        />
+      </section>
+
+      {/* ── GRÁFICO 2: Títulos de Temporada ── */}
+      {withTitles.length > 0 && (
+        <section>
+          <div className="mb-4 flex items-center gap-3 border-b border-border-subtle pb-3">
+            <span className="font-body text-[10px] font-bold text-crimson">♥</span>
+            <h2 className="font-heading text-2xl font-bold text-ink">Títulos de Temporada</h2>
+          </div>
+          <div className="bg-surface border border-border-subtle p-5">
+            <p className="mb-4 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
+              Jogadores com ao menos 1 título de temporada
+            </p>
+            <div style={{ height: `${Math.max(160, withTitles.length * 36)}px` }}>
+              <Bar data={titlesData} options={hBarOptions} />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── GRÁFICO 3: Presenças por Temporada ── */}
+      {seasonChronological.length > 0 && (
+        <section>
+          <div className="mb-4 flex items-center gap-3 border-b border-border-subtle pb-3">
+            <span className="font-body text-[10px] font-bold text-crimson">♣</span>
+            <h2 className="font-heading text-2xl font-bold text-ink">Presenças por Temporada</h2>
+          </div>
+          <div className="bg-surface border border-border-subtle p-5">
+            <p className="mb-4 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
+              Total de presenças registradas · temporada ativa em destaque
+            </p>
+            <div className="h-56">
+              <Bar data={attendanceData} options={vBarOptions} />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Por Temporada */}
+      <section>
+        <div className="mb-4 flex items-center gap-3 border-b border-border-subtle pb-3">
+          <span className="font-body text-[10px] font-bold text-crimson">♣</span>
+          <h2 className="font-heading text-2xl font-bold text-ink">Por Temporada</h2>
+        </div>
+        <PaginatedTable<SeasonSummary>
+          data={seasonSummaries}
+          pageSize={10}
+          emptyMessage="Nenhuma temporada encontrada."
+          renderHeader={() => (
+            <tr className="border-b border-border-strong bg-canvas">
+              <th className="px-5 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Temporada</th>
+              <th className="px-5 py-3 text-right font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Semanas</th>
+              <th className="px-5 py-3 text-right font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Presenças</th>
+              <th className="px-5 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Melhor Jogador</th>
+            </tr>
+          )}
+          renderRow={(s, _i) => (
+            <tr
+              key={s.season_id}
+              className="border-b border-border-subtle transition-colors hover:bg-canvas/60"
+            >
+              <td className="px-5 py-3.5">
+                <div className="flex items-center gap-3">
+                  <span className="font-body text-sm font-medium text-ink">{s.season_name}</span>
+                  {s.is_active && (
+                    <span className="bg-crimson px-2 py-0.5 font-body text-[10px] font-bold uppercase tracking-[2px] text-white">
+                      Ativa
+                    </span>
+                  )}
+                </div>
+              </td>
+              <td className="px-5 py-3.5 text-right font-body text-sm text-secondary">
+                {s.weeks_played}/{s.num_weeks}
+              </td>
+              <td className="px-5 py-3.5 text-right font-body text-sm text-secondary">
+                {s.total_attendances}
+              </td>
+              <td className="px-5 py-3.5 font-body text-sm text-ink">
+                {s.top_player ? (
+                  <>
+                    {s.top_player}
+                    <span className="ml-2 font-body text-[11px] font-bold text-crimson">
+                      {s.top_points} pts
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-muted">—</span>
+                )}
+              </td>
+            </tr>
+          )}
+        />
+      </section>
+    </div>
+  );
+}
+
+function SortableHeader({
+  sortKeyVal,
+  currentSortKey,
+  currentSortDir,
+  onSort,
+}: {
+  sortKeyVal: SortKey;
+  currentSortKey: SortKey;
+  currentSortDir: "asc" | "desc";
+  onSort: (key: SortKey) => void;
+}) {
+  const active = sortKeyVal === currentSortKey;
+  return (
+    <th
+      className="px-4 py-3 text-right font-body text-[10px] font-bold uppercase tracking-[2px] text-muted group"
+      aria-sort={active ? (currentSortDir === "desc" ? "descending" : "ascending") : "none"}
+    >
+      <button
+        onClick={() => onSort(sortKeyVal)}
+        className="flex w-full cursor-pointer items-center justify-end gap-1 transition-colors hover:text-crimson"
+      >
+        {SORT_LABELS[sortKeyVal]}
+        <span
+          className={`text-[10px] ${active ? "text-crimson" : "opacity-0 group-hover:opacity-100"}`}
+        >
+          {active ? (currentSortDir === "desc" ? "▼" : "▲") : "↕"}
+        </span>
+      </button>
+    </th>
+  );
+}
+
+function StatBar({
+  label,
+  value,
+  last,
+}: {
+  label: string;
+  value: number;
+  last?: boolean;
+}) {
+  return (
+    <div className={`p-8 text-center ${!last ? "border-r border-border-subtle" : ""}`}>
+      <p className="font-heading text-[32px] font-bold text-crimson">{value}</p>
+      <p className="mt-1.5 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
+        {label}
+      </p>
+    </div>
+  );
+}
+```
+
+**Step 2: Verificar build**
+
+```bash
+cd "C:/Users/User/poker-league"
+npm run build
+```
+
+Expected: build limpo sem erros TypeScript.
+
+**Step 3: Commit**
+
+```bash
+git add app/estatisticas/stats-content.tsx
+git commit -m "feat: add charts to stats page (top points, titles, attendance)"
+```
+
+---
+
+### Task 3: Push e limpeza
+
+**Step 1: Push**
+
+```bash
+git push
+```
+
+**Step 2: Remover arquivo de esboço**
+
+```bash
+git rm docs/esboço-stats-charts.html
+git commit -m "chore: remove stats charts mockup"
+git push
+```
