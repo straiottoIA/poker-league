@@ -239,24 +239,6 @@ export function StatsContent({
         )}
       </section>
 
-      {/* ── GRÁFICO 1: Top Jogadores por Pontos ── */}
-      {top10Points.length > 0 && (
-        <section>
-          <div className="mb-4 flex items-center gap-3 border-b border-border-subtle pb-3">
-            <span className="font-body text-[10px] font-bold text-crimson">♦</span>
-            <h2 className="font-heading text-2xl font-bold text-ink">Top Jogadores — Pontos</h2>
-          </div>
-          <div className="bg-surface border border-border-subtle p-5">
-            <p className="mb-4 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
-              Top 10 por pontuação acumulada all-time
-            </p>
-            <div style={{ height: `${Math.max(220, top10Points.length * 36)}px` }}>
-              <Bar data={topPointsData} options={hBarOptions} />
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* Ranking All-Time */}
       <section>
         <div className="mb-4 flex items-center gap-3 border-b border-border-subtle pb-3">
@@ -352,6 +334,24 @@ export function StatsContent({
         />
       </section>
 
+      {/* ── GRÁFICO 1: Top Jogadores por Pontos ── */}
+      {top10Points.length > 0 && (
+        <section>
+          <div className="mb-4 flex items-center gap-3 border-b border-border-subtle pb-3">
+            <span className="font-body text-[10px] font-bold text-crimson">♦</span>
+            <h2 className="font-heading text-2xl font-bold text-ink">Top Jogadores — Pontos</h2>
+          </div>
+          <div className="bg-surface border border-border-subtle p-5">
+            <p className="mb-4 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
+              Top 10 por pontuação acumulada all-time
+            </p>
+            <div style={{ height: `${Math.max(220, top10Points.length * 36)}px` }}>
+              <Bar data={topPointsData} options={hBarOptions} />
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ── GRÁFICO 2: Títulos de Temporada ── */}
       {withTitles.length > 0 && (
         <section>
@@ -365,23 +365,6 @@ export function StatsContent({
             </p>
             <div style={{ height: `${Math.max(200, withTitles.length * 36)}px` }}>
               <Bar data={titlesData} options={hBarOptions} />
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ── GRÁFICO 3: Presenças por Temporada ── */}
-      {seasonChronological.length > 0 && (
-        <section>
-          <div className="mb-4 flex items-center gap-3 border-b border-border-subtle pb-3">
-            <h2 className="font-heading text-2xl font-bold text-ink">Presenças por Temporada</h2>
-          </div>
-          <div className="bg-surface border border-border-subtle p-5">
-            <p className="mb-4 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
-              Total de presenças registradas · temporada ativa em destaque
-            </p>
-            <div className="h-56">
-              <Bar data={attendanceData} options={vBarOptions} />
             </div>
           </div>
         </section>
@@ -442,6 +425,23 @@ export function StatsContent({
           )}
         />
       </section>
+
+      {/* ── GRÁFICO 3: Presenças por Temporada ── */}
+      {seasonChronological.length > 0 && (
+        <section>
+          <div className="mb-4 flex items-center gap-3 border-b border-border-subtle pb-3">
+            <h2 className="font-heading text-2xl font-bold text-ink">Presenças por Temporada</h2>
+          </div>
+          <div className="bg-surface border border-border-subtle p-5">
+            <p className="mb-4 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
+              Total de presenças registradas · temporada ativa em destaque
+            </p>
+            <div className="h-56">
+              <Bar data={attendanceData} options={vBarOptions} />
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }
