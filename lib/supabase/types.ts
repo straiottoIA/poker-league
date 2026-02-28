@@ -55,7 +55,8 @@ export interface AllTimePlayerStat {
   total_weeks: number;
   attendance_pct: number;
   seasons_played: number;
-  wins: number;
+  season_wins: number;
+  week_wins: number;
   podiums: number;
   avg_points: number;
 }
