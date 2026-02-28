@@ -1,7 +1,19 @@
 "use client";
 import { useState } from "react";
+import { useTheme } from "next-themes";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Tooltip,
+  type ChartOptions,
+} from "chart.js";
+import { Bar } from "react-chartjs-2";
 import { PaginatedTable } from "@/components/paginated-table";
 import type { AllTimePlayerStat, SeasonSummary, Season } from "@/lib/supabase/types";
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
 
 type SortKey =
   | "total_points"
@@ -24,6 +36,18 @@ const SORT_LABELS: Record<SortKey, string> = {
 
 const SORT_KEYS = Object.keys(SORT_LABELS) as SortKey[];
 
+const CRIMSON = "#e53935";
+const BAR_COLORS = [
+  CRIMSON,
+  "rgba(229,57,53,0.75)",
+  "rgba(229,57,53,0.55)",
+];
+const BAR_REST = "rgba(229,57,53,0.30)";
+
+function barColors(length: number): string[] {
+  return Array.from({ length }, (_, i) => BAR_COLORS[i] ?? BAR_REST);
+}
+
 interface StatsContentProps {
   allTimeStats: AllTimePlayerStat[];
   seasonSummaries: SeasonSummary[];
@@ -45,6 +69,13 @@ export function StatsContent({
 }: StatsContentProps) {
   const [sortKey, setSortKey] = useState<SortKey>("total_points");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
+
+  const tickColor = isDark ? "#8a8a8a" : "#999999";
+  const gridColor = isDark
+    ? "rgba(240,235,228,0.07)"
+    : "rgba(26,26,26,0.08)";
 
   const sorted = [...allTimeStats].sort((a, b) => {
     const diff = a[sortKey] - b[sortKey];
@@ -59,6 +90,119 @@ export function StatsContent({
       setSortDir("desc");
     }
   }
+
+  // ── Chart data ──────────────────────────────────────────────────
+
+  const top10Points = [...allTimeStats]
+    .sort((a, b) => b.total_points - a.total_points)
+    .slice(0, 10);
+
+  const topPointsData = {
+    labels: top10Points.map((s) => s.player_name),
+    datasets: [
+      {
+        data: top10Points.map((s) => s.total_points),
+        backgroundColor: barColors(top10Points.length),
+        borderRadius: 2,
+        borderSkipped: false,
+      },
+    ],
+  };
+
+  const withTitles = [...allTimeStats]
+    .filter((s) => s.season_wins > 0)
+    .sort((a, b) => b.season_wins - a.season_wins);
+
+  const titlesData = {
+    labels: withTitles.map((s) => s.player_name),
+    datasets: [
+      {
+        data: withTitles.map((s) => s.season_wins),
+        backgroundColor: barColors(withTitles.length),
+        borderRadius: 2,
+        borderSkipped: false,
+      },
+    ],
+  };
+
+  const seasonChronological = [...seasonSummaries].reverse();
+  const attendanceData = {
+    labels: seasonChronological.map((s) =>
+      s.season_name.replace("Temporada ", "")
+    ),
+    datasets: [
+      {
+        data: seasonChronological.map((s) => s.total_attendances),
+        backgroundColor: seasonChronological.map((s) =>
+          s.is_active ? "rgba(229,57,53,0.45)" : CRIMSON
+        ),
+        borderRadius: 2,
+        borderSkipped: false,
+      },
+    ],
+  };
+
+  // ── Chart options ────────────────────────────────────────────────
+
+  const hBarOptions: ChartOptions<"bar"> = {
+    indexAxis: "y",
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => `  ${ctx.parsed.x}`,
+        },
+      },
+    },
+    scales: {
+      x: {
+        grid: { color: gridColor },
+        ticks: {
+          color: tickColor,
+          font: { family: "DM Sans, sans-serif", size: 11 },
+        },
+      },
+      y: {
+        grid: { display: false },
+        ticks: {
+          color: tickColor,
+          font: { family: "DM Sans, sans-serif", size: 11 },
+        },
+      },
+    },
+  };
+
+  const vBarOptions: ChartOptions<"bar"> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => `  ${ctx.parsed.y} presenças`,
+        },
+      },
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: {
+          color: tickColor,
+          font: { family: "DM Sans, sans-serif", size: 10 },
+          maxRotation: 45,
+        },
+      },
+      y: {
+        grid: { color: gridColor },
+        ticks: {
+          color: tickColor,
+          font: { family: "DM Sans, sans-serif", size: 11 },
+        },
+      },
+    },
+  };
 
   return (
     <div className="space-y-12">
@@ -94,13 +238,30 @@ export function StatsContent({
         )}
       </section>
 
+      {/* ── GRÁFICO 1: Top Jogadores por Pontos ── */}
+      {top10Points.length > 0 && (
+        <section>
+          <div className="mb-4 flex items-center gap-3 border-b border-border-subtle pb-3">
+            <span className="font-body text-[10px] font-bold text-crimson">♦</span>
+            <h2 className="font-heading text-2xl font-bold text-ink">Top Jogadores — Pontos</h2>
+          </div>
+          <div className="bg-surface border border-border-subtle p-5">
+            <p className="mb-4 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
+              Top 10 por pontuação acumulada all-time
+            </p>
+            <div style={{ height: `${Math.max(220, top10Points.length * 36)}px` }}>
+              <Bar data={topPointsData} options={hBarOptions} />
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Ranking All-Time */}
       <section>
         <div className="mb-4 flex items-center gap-3 border-b border-border-subtle pb-3">
           <span className="font-body text-[10px] font-bold text-crimson">♠</span>
           <h2 className="font-heading text-2xl font-bold text-ink">Ranking All-Time</h2>
         </div>
-        {/* Pills de ordenação */}
         <div className="mb-4 flex items-center gap-2 overflow-x-auto pb-1">
           <span className="shrink-0 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
             Ordenar por:
@@ -127,7 +288,6 @@ export function StatsContent({
             );
           })}
         </div>
-        {/* key forces remount → resets pagination to page 1 on sort change */}
         <PaginatedTable<AllTimePlayerStat>
           key={`${sortKey}-${sortDir}`}
           data={sorted}
@@ -190,6 +350,42 @@ export function StatsContent({
           )}
         />
       </section>
+
+      {/* ── GRÁFICO 2: Títulos de Temporada ── */}
+      {withTitles.length > 0 && (
+        <section>
+          <div className="mb-4 flex items-center gap-3 border-b border-border-subtle pb-3">
+            <span className="font-body text-[10px] font-bold text-crimson">♥</span>
+            <h2 className="font-heading text-2xl font-bold text-ink">Títulos de Temporada</h2>
+          </div>
+          <div className="bg-surface border border-border-subtle p-5">
+            <p className="mb-4 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
+              Jogadores com ao menos 1 título de temporada
+            </p>
+            <div style={{ height: `${Math.max(160, withTitles.length * 36)}px` }}>
+              <Bar data={titlesData} options={hBarOptions} />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── GRÁFICO 3: Presenças por Temporada ── */}
+      {seasonChronological.length > 0 && (
+        <section>
+          <div className="mb-4 flex items-center gap-3 border-b border-border-subtle pb-3">
+            <span className="font-body text-[10px] font-bold text-crimson">♣</span>
+            <h2 className="font-heading text-2xl font-bold text-ink">Presenças por Temporada</h2>
+          </div>
+          <div className="bg-surface border border-border-subtle p-5">
+            <p className="mb-4 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
+              Total de presenças registradas · temporada ativa em destaque
+            </p>
+            <div className="h-56">
+              <Bar data={attendanceData} options={vBarOptions} />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Por Temporada */}
       <section>
