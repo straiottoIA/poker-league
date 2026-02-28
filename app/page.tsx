@@ -3,15 +3,18 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getSeasons, getActiveSeason } from "@/lib/queries/seasons";
 import { getPlayers } from "@/lib/queries/players";
+import { getHallOfFame } from "@/lib/queries/hall-of-fame";
+import type { HallEntry } from "@/lib/queries/hall-of-fame";
 
-const HALL_OF_FAME = [
-  { season: "XXXV", champion: "Léo Negreiros", note: "Bicampeão" },
-  { season: "XXXIV", champion: "Léo Negreiros", note: "Título back-to-back" },
-  { season: "XXXIII", champion: "Carlos Henrique", note: "Campeão + Liga Júnior" },
-  { season: "XXXII", champion: "Rafael Giovanella", note: "—" },
-  { season: "XXXI", champion: "Rodrigo Gurgel", note: "—" },
-  { season: "XXX", champion: "Marcel", note: "Temporada jubileu" },
-];
+function toRoman(n: number): string {
+  const vals = [1000,900,500,400,100,90,50,40,10,9,5,4,1];
+  const syms = ["M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"];
+  let result = "";
+  for (let i = 0; i < vals.length; i++) {
+    while (n >= vals[i]) { result += syms[i]; n -= vals[i]; }
+  }
+  return result;
+}
 
 const NEWS = [
   {
@@ -40,11 +43,13 @@ const bleedStyle: CSSProperties = {
 export default async function LandingPage() {
   const supabase = await createClient();
 
-  const [seasons, players, activeSeason] = await Promise.all([
+  const [seasons, players, activeSeason, hallEntries] = await Promise.all([
     getSeasons(supabase),
     getPlayers(supabase),
     getActiveSeason(supabase),
+    getHallOfFame(supabase),
   ]);
+  const recentHall: HallEntry[] = hallEntries.slice(0, 6);
 
   const appLink = activeSeason ? `/seasons/${activeSeason.id}` : "/seasons";
   const totalSeasons = Math.max(seasons.length, 36);
@@ -207,14 +212,14 @@ export default async function LandingPage() {
                   Campeão
                 </th>
                 <th className="hidden px-5 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted sm:table-cell">
-                  Destaque
+                  Vice
                 </th>
               </tr>
             </thead>
             <tbody>
-              {HALL_OF_FAME.map((entry, i) => (
+              {recentHall.map((entry, i) => (
                 <tr
-                  key={entry.season}
+                  key={entry.id}
                   className={`border-b border-border-subtle transition-colors hover:bg-canvas/60 ${
                     i === 0 ? "bg-tint-crimson-row" : ""
                   }`}
@@ -222,11 +227,11 @@ export default async function LandingPage() {
                   <td className="px-5 py-3.5">
                     {i === 0 ? (
                       <span className="bg-crimson px-2 py-0.5 font-body text-[10px] font-bold text-white">
-                        {entry.season}
+                        {toRoman(entry.season_number)}
                       </span>
                     ) : (
                       <span className="font-heading text-sm font-bold text-crimson">
-                        {entry.season}
+                        {toRoman(entry.season_number)}
                       </span>
                     )}
                   </td>
@@ -234,7 +239,7 @@ export default async function LandingPage() {
                     {entry.champion}
                   </td>
                   <td className="hidden px-5 py-3.5 font-body text-xs text-muted sm:table-cell">
-                    {entry.note}
+                    {entry.runner_up}
                   </td>
                 </tr>
               ))}
