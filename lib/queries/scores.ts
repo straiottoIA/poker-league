@@ -8,10 +8,6 @@ type RawScoreRow = {
   players: { name: string } | null;
 };
 
-type RawFullScoreRow = RawScoreRow & {
-  season_id: string;
-  week_number: number;
-};
 
 function extractPlayerName(row: RawScoreRow, context: string): string {
   if (!row.players) throw new Error(`Dados do jogador ausentes em ${context} para player_id ${row.player_id}`);
@@ -109,4 +105,50 @@ export async function getAllSeasonScores(
     .order("week_number");
   if (error) throw error;
   return (data as Score[]) ?? [];
+}
+
+export interface LastWeekSummary {
+  weekNumber: number;
+  seasonName: string;
+  topScorer: { name: string; points: number };
+}
+
+export async function getLastWeekSummary(
+  supabase: SupabaseClient,
+  seasonId: string,
+  seasonName: string
+): Promise<LastWeekSummary | null> {
+  const { data: maxData, error: maxError } = await supabase
+    .from("scores")
+    .select("week_number")
+    .eq("season_id", seasonId)
+    .order("week_number", { ascending: false })
+    .limit(1)
+    .single();
+
+  if (maxError || !maxData) return null;
+
+  const weekNumber = maxData.week_number as number;
+
+  const { data: weekData, error: weekError } = await supabase
+    .from("scores")
+    .select("points, players(name)")
+    .eq("season_id", seasonId)
+    .eq("week_number", weekNumber);
+
+  if (weekError || !weekData || weekData.length === 0) return null;
+
+  type Row = { points: number; players: { name: string } | null };
+
+  const top = (weekData as unknown as Row[]).reduce((best, s) =>
+    s.points > best.points ? s : best
+  );
+
+  if (!top.players) return null;
+
+  return {
+    weekNumber,
+    seasonName,
+    topScorer: { name: top.players.name, points: top.points },
+  };
 }
