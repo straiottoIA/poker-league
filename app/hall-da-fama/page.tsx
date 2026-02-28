@@ -124,7 +124,7 @@ export default async function HallDaFamaPage() {
       <div className="bg-panel rounded-xl px-6 py-14 text-center">
         <SparklesIcon className="w-8 h-8 text-crimson mx-auto mb-4" />
         <p className="font-body text-[10px] font-bold uppercase tracking-[5px] text-zinc-500 mb-3">
-          TTPF · Est. 2010
+          TTPF · Est. 2009
         </p>
         <h1 className="font-heading text-5xl font-bold text-white mb-3">
           Hall da Fama
@@ -304,7 +304,7 @@ export default async function HallDaFamaPage() {
             </p>
           </div>
           <div>
-            <p className="font-heading text-3xl font-bold text-crimson">2010</p>
+            <p className="font-heading text-3xl font-bold text-crimson">2009</p>
             <p className="font-body text-[10px] font-bold uppercase tracking-[3px] text-zinc-500 mt-1">
               Fundação
             </p>

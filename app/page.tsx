@@ -62,7 +62,7 @@ export default async function LandingPage() {
             </h1>
             <div className="mt-5 h-px w-16 bg-crimson" />
             <p className="mt-5 font-body text-sm leading-relaxed text-secondary">
-              O torneio de poker mais tradicional de Brasília. Desde 2010
+              O torneio de poker mais tradicional de Brasília. Desde 2009
               reunindo amigos, rivais e campeões ao redor do feltro verde.
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
@@ -100,7 +100,7 @@ export default async function LandingPage() {
                 ♠
               </span>
               <p className="mt-5 font-body text-[11px] font-bold uppercase tracking-[4px] text-white/40">
-                Est. 2010 — Brasília, DF
+                Est. 2009 — Brasília, DF
               </p>
             </div>
           </div>
@@ -118,7 +118,7 @@ export default async function LandingPage() {
                 num: `${totalPlayers > 0 ? totalPlayers : "15"}+`,
                 label: "Membros",
               },
-              { num: "Est. 2010", label: "Fundação" },
+              { num: "Est. 2009", label: "Fundação" },
             ].map((stat, i, arr) => (
               <div
                 key={stat.label}
@@ -151,7 +151,7 @@ export default async function LandingPage() {
           {[
             {
               icon: "♠",
-              title: "Tradição desde 2010",
+              title: "Tradição desde 2009",
               desc: "O TTPF nasceu entre amigos em Brasília e cresceu até se tornar um dos campeonatos amadores mais sólidos da cidade, com regras, temporadas e ranking próprios.",
             },
             {
@@ -317,7 +317,7 @@ export default async function LandingPage() {
                 TTP<em className="not-italic text-crimson">F</em>
               </p>
               <p className="font-body text-[11px] text-muted">
-                Tip Total Poker Friends — Brasília, DF — Est. 2010
+                Tip Total Poker Friends — Brasília, DF — Est. 2009
               </p>
               <div className="flex items-center gap-6">
                 <a

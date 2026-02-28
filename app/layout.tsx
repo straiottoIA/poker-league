@@ -22,7 +22,7 @@ const dmSans = DM_Sans({
 
 export const metadata: Metadata = {
   title: "TTPF — Tip Total Poker Friends",
-  description: "Onde cada mão conta uma história. Brasília, DF — Est. 2010",
+  description: "Onde cada mão conta uma história. Brasília, DF — Est. 2009",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
