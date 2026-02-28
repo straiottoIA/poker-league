@@ -7,13 +7,14 @@ import {
   LinearScale,
   BarElement,
   Tooltip,
+  Legend,
   type ChartOptions,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { PaginatedTable } from "@/components/paginated-table";
 import type { AllTimePlayerStat, SeasonSummary, Season } from "@/lib/supabase/types";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 type SortKey =
   | "total_points"
@@ -362,7 +363,7 @@ export function StatsContent({
             <p className="mb-4 font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
               Jogadores com ao menos 1 título de temporada
             </p>
-            <div style={{ height: `${Math.max(160, withTitles.length * 36)}px` }}>
+            <div style={{ height: `${Math.max(200, withTitles.length * 36)}px` }}>
               <Bar data={titlesData} options={hBarOptions} />
             </div>
           </div>
@@ -373,7 +374,6 @@ export function StatsContent({
       {seasonChronological.length > 0 && (
         <section>
           <div className="mb-4 flex items-center gap-3 border-b border-border-subtle pb-3">
-            <span className="font-body text-[10px] font-bold text-crimson">♣</span>
             <h2 className="font-heading text-2xl font-bold text-ink">Presenças por Temporada</h2>
           </div>
           <div className="bg-surface border border-border-subtle p-5">
