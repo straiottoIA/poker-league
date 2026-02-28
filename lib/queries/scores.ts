@@ -83,12 +83,12 @@ export async function getLeaderboard(
   }
 
   return Array.from(playerMap.entries())
-    .map(([pid, info], i) => ({
+    .map(([pid, info]) => ({
       player_id: pid,
       player_name: info.name,
       total_points: info.totalPoints,
       weeks_attended: info.weeksAttended,
-      rank: i + 1,
+      rank: 0,
     }))
     .sort((a, b) => b.total_points - a.total_points)
     .map((e, i) => ({ ...e, rank: i + 1 }));
