@@ -5,25 +5,8 @@ import { getSeasons, getActiveSeason } from "@/lib/queries/seasons";
 import { getPlayers } from "@/lib/queries/players";
 import { getHallOfFame } from "@/lib/queries/hall-of-fame";
 import type { HallEntry } from "@/lib/queries/hall-of-fame";
+import { getLeaderboard, getLastWeekSummary } from "@/lib/queries/scores";
 import { toRoman } from "@/lib/utils/roman";
-
-const NEWS = [
-  {
-    date: "Mar 2017",
-    title: "5ª Etapa da XXXVI Temporada",
-    body: "Mais uma rodada acirrada. O ranking geral segue aberto com pontuações disputadas entre os membros veteranos.",
-  },
-  {
-    date: "Mar 2017",
-    title: "Léo Negreiros é Bicampeão",
-    body: "Léo conquista o segundo título consecutivo na Temporada XXXV e consolida seu nome no topo do Hall da Fama do TTPF.",
-  },
-  {
-    date: "Set 2016",
-    title: "Carlos Henrique fatura a XXXIII",
-    body: "CH registra seu nome no Hall da Fama após temporada consistente e uma mesa final decisiva contra os principais rivais.",
-  },
-];
 
 // Full-bleed helper: breaks out of max-w-5xl container to viewport width
 const bleedStyle: CSSProperties = {
@@ -40,11 +23,57 @@ export default async function LandingPage() {
     getActiveSeason(supabase),
     getHallOfFame(supabase),
   ]);
+
+  const [leaderboard, lastWeek] = activeSeason
+    ? await Promise.all([
+        getLeaderboard(supabase, activeSeason.id),
+        getLastWeekSummary(supabase, activeSeason.id, activeSeason.name),
+      ])
+    : [[], null];
+
   const recentHall: HallEntry[] = hallEntries.slice(0, 6);
+  const leader = leaderboard[0] ?? null;
+  const lastChampion = hallEntries[0] ?? null;
 
   const appLink = activeSeason ? `/seasons/${activeSeason.id}` : "/seasons";
   const totalSeasons = Math.max(seasons.length, 36);
   const totalPlayers = players.length;
+
+  const newsCards = [
+    lastWeek
+      ? {
+          date: `Sem. ${lastWeek.weekNumber} · ${lastWeek.seasonName}`,
+          title: `Etapa ${lastWeek.weekNumber} encerrada`,
+          body: `${lastWeek.topScorer.name} venceu com ${lastWeek.topScorer.points} pontos.`,
+        }
+      : {
+          date: activeSeason ? activeSeason.name : "Liga",
+          title: "Aguardando próxima etapa",
+          body: "A temporada ainda não registrou resultados.",
+        },
+    lastChampion
+      ? {
+          date: `Temporada ${toRoman(lastChampion.season_number)}`,
+          title: `${lastChampion.champion} é Campeão`,
+          body: `Vice-campeão: ${lastChampion.runner_up}`,
+        }
+      : {
+          date: "Hall da Fama",
+          title: "Histórico em construção",
+          body: "—",
+        },
+    leader && activeSeason
+      ? {
+          date: "Temporada Ativa",
+          title: `${leader.player_name} lidera ${activeSeason.name}`,
+          body: `${leader.total_points} pontos na temporada.`,
+        }
+      : {
+          date: "Temporada",
+          title: "Sem temporada ativa",
+          body: "—",
+        },
+  ];
 
   return (
     <div className="-mt-10">
@@ -261,7 +290,7 @@ export default async function LandingPage() {
         </div>
 
         <div className="grid gap-7 sm:grid-cols-3">
-          {NEWS.map((item) => (
+          {newsCards.map((item) => (
             <div key={item.title} className="border-t-2 border-crimson pt-5">
               <p className="font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
                 {item.date}
