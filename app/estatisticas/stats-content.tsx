@@ -5,7 +5,8 @@ import type { AllTimePlayerStat, SeasonSummary, Season } from "@/lib/supabase/ty
 
 type SortKey =
   | "total_points"
-  | "wins"
+  | "season_wins"
+  | "week_wins"
   | "podiums"
   | "weeks_attended"
   | "attendance_pct"
@@ -13,7 +14,8 @@ type SortKey =
 
 const SORT_LABELS: Record<SortKey, string> = {
   total_points: "Pontos",
-  wins: "Vitórias",
+  season_wins: "Vit. Temp.",
+  week_wins: "Vit. Etapa",
   podiums: "Pódios",
   weeks_attended: "Presenças",
   attendance_pct: "% Pres.",
@@ -136,7 +138,8 @@ export function StatsContent({
               <th className="px-4 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">#</th>
               <th className="px-4 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Jogador</th>
               <SortableHeader sortKeyVal="total_points" currentSortKey={sortKey} currentSortDir={sortDir} onSort={handleSort} />
-              <SortableHeader sortKeyVal="wins" currentSortKey={sortKey} currentSortDir={sortDir} onSort={handleSort} />
+              <SortableHeader sortKeyVal="season_wins" currentSortKey={sortKey} currentSortDir={sortDir} onSort={handleSort} />
+              <SortableHeader sortKeyVal="week_wins" currentSortKey={sortKey} currentSortDir={sortDir} onSort={handleSort} />
               <SortableHeader sortKeyVal="podiums" currentSortKey={sortKey} currentSortDir={sortDir} onSort={handleSort} />
               <SortableHeader sortKeyVal="weeks_attended" currentSortKey={sortKey} currentSortDir={sortDir} onSort={handleSort} />
               <SortableHeader sortKeyVal="attendance_pct" currentSortKey={sortKey} currentSortDir={sortDir} onSort={handleSort} />
@@ -166,7 +169,10 @@ export function StatsContent({
                 {entry.total_points}
               </td>
               <td className="px-4 py-3.5 text-right font-body text-sm text-secondary">
-                {entry.wins}
+                {entry.season_wins}
+              </td>
+              <td className="px-4 py-3.5 text-right font-body text-sm text-secondary">
+                {entry.week_wins}
               </td>
               <td className="px-4 py-3.5 text-right font-body text-sm text-secondary">
                 {entry.podiums}
