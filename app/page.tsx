@@ -289,9 +289,13 @@ export default async function LandingPage() {
           </a>
         </div>
 
-        <div className="grid gap-7 sm:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-3">
           {newsCards.map((item, i) => (
-            <div key={i} className="border-t-2 border-crimson pt-5">
+            <div
+              key={i}
+              className="rounded-lg border border-border-strong bg-surface p-6 shadow-[var(--shadow-sm)] transition-all duration-200 hover:-translate-y-1 hover:border-crimson/30 hover:shadow-[var(--shadow-md)]"
+            >
+              <div className="mb-4 h-0.5 w-8 bg-crimson" />
               <p className="font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
                 {item.date}
               </p>
