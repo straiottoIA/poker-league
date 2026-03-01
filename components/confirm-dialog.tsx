@@ -45,11 +45,11 @@ export function ConfirmDialog({
       className="fixed inset-0 z-50 flex items-center justify-center"
     >
       <div
-        className="absolute inset-0 bg-black/50"
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
         onClick={onCancel}
         aria-hidden="true"
       />
-      <div className="relative z-10 w-full max-w-sm border-2 border-ink bg-surface p-8">
+      <div className="relative z-10 w-full max-w-sm rounded-xl bg-surface p-8 shadow-[var(--shadow-lg)] animate-dialog-enter">
         <h2 id="dialog-title" className="font-heading text-xl font-bold text-ink">
           {title}
         </h2>
@@ -59,14 +59,14 @@ export function ConfirmDialog({
         <div className="mt-8 flex gap-3">
           <button
             onClick={onConfirm}
-            className="flex-1 bg-crimson px-6 py-3 font-body text-[11px] font-bold uppercase tracking-[2px] text-white transition-colors hover:bg-[#c62828]"
+            className="flex-1 rounded-md bg-crimson px-6 py-3 font-body text-[11px] font-bold uppercase tracking-[2px] text-white shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:bg-[#c62828] hover:shadow-[var(--shadow-md)]"
           >
             {confirmLabel}
           </button>
           <button
             ref={cancelRef}
             onClick={onCancel}
-            className="flex-1 border-2 border-ink bg-transparent px-6 py-3 font-body text-[11px] font-bold uppercase tracking-[2px] text-ink transition-all hover:bg-ink hover:text-canvas"
+            className="flex-1 rounded-md border-2 border-ink bg-transparent px-6 py-3 font-body text-[11px] font-bold uppercase tracking-[2px] text-ink transition-all duration-150 hover:-translate-y-0.5 hover:bg-ink hover:text-canvas"
           >
             Cancelar
           </button>
