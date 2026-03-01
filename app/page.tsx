@@ -290,8 +290,8 @@ export default async function LandingPage() {
         </div>
 
         <div className="grid gap-7 sm:grid-cols-3">
-          {newsCards.map((item) => (
-            <div key={item.title} className="border-t-2 border-crimson pt-5">
+          {newsCards.map((item, i) => (
+            <div key={i} className="border-t-2 border-crimson pt-5">
               <p className="font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
                 {item.date}
               </p>

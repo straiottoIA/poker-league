@@ -118,6 +118,8 @@ export async function getLastWeekSummary(
   seasonId: string,
   seasonName: string
 ): Promise<LastWeekSummary | null> {
+  // Two queries: first gets max week_number, second fetches that week's scores.
+  // Could be optimised into one query in the future if latency becomes a concern.
   const { data: maxData, error: maxError } = await supabase
     .from("scores")
     .select("week_number")
