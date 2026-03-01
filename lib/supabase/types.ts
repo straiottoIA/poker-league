@@ -53,7 +53,7 @@ export interface AllTimePlayerStat {
   total_points: number;
   weeks_attended: number;
   total_weeks: number;
-  attendance_pct: number;
+  attendance_pct: number | null;
   seasons_played: number;
   season_wins: number;
   week_wins: number;

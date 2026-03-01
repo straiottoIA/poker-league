@@ -79,7 +79,9 @@ export function StatsContent({
     : "rgba(26,26,26,0.08)";
 
   const sorted = [...allTimeStats].sort((a, b) => {
-    const diff = a[sortKey] - b[sortKey];
+    const av = a[sortKey] ?? -1;
+    const bv = b[sortKey] ?? -1;
+    const diff = av - bv;
     return sortDir === "desc" ? -diff : diff;
   });
 
@@ -324,7 +326,7 @@ export function StatsContent({
                 {entry.weeks_attended}
               </td>
               <td className="px-4 py-3.5 text-right font-body text-sm text-muted">
-                {entry.attendance_pct}%
+                {entry.attendance_pct !== null ? `${entry.attendance_pct}%` : "—"}
               </td>
               <td className="px-4 py-3.5 text-right font-body text-sm text-muted">
                 {entry.avg_points}
