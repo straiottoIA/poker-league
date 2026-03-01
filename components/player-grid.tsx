@@ -90,12 +90,12 @@ export function PlayerGrid({ initialPlayers }: { initialPlayers: PlayerWithStats
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
             placeholder="Nome do jogador"
-            className="flex-1 border border-border-strong bg-surface px-3 py-2.5 font-body text-sm text-ink placeholder:text-muted focus:border-ink focus:outline-none"
+            className="flex-1 rounded-md border border-border-strong bg-surface px-3 py-2.5 font-body text-sm text-ink placeholder:text-muted focus:border-crimson focus:outline-none focus:ring-2 focus:ring-crimson/20"
           />
           <button
             onClick={handleAdd}
             disabled={loading || !name.trim()}
-            className="bg-ink px-6 py-2.5 font-body text-[11px] font-bold uppercase tracking-[2px] text-canvas transition-colors hover:bg-crimson disabled:opacity-50"
+            className="rounded-md bg-ink px-6 py-2.5 font-body text-[11px] font-bold uppercase tracking-[2px] text-canvas shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:bg-crimson hover:shadow-[var(--shadow-md)] disabled:opacity-50"
           >
             {loading ? "..." : "Adicionar"}
           </button>
@@ -117,7 +117,7 @@ export function PlayerGrid({ initialPlayers }: { initialPlayers: PlayerWithStats
           {players.map((player) => (
             <div
               key={player.id}
-              className="relative flex flex-col gap-4 border border-border-subtle bg-surface p-5 transition-colors hover:border-crimson/30"
+              className="relative flex flex-col gap-4 rounded-xl border border-border-subtle bg-surface p-5 shadow-[var(--shadow-sm)] transition-all duration-200 hover:-translate-y-1 hover:border-crimson/30 hover:shadow-[var(--shadow-md)]"
             >
               {isLoggedIn && (
                 <button

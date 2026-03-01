@@ -49,7 +49,7 @@ export default function LoginPage() {
         </div>
 
         {/* Form card */}
-        <div className="border-2 border-ink bg-surface px-8 py-10">
+        <div className="rounded-2xl bg-surface px-8 py-10 shadow-[var(--shadow-lg)]">
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
               <label htmlFor="email" className="block font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
@@ -62,7 +62,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 autoComplete="email"
-                className="mt-2 block w-full border border-border-strong bg-canvas px-3 py-2.5 font-body text-sm text-ink focus:border-ink focus:bg-surface focus:outline-none"
+                className="mt-2 block w-full rounded-md border border-border-strong bg-canvas px-3 py-2.5 font-body text-sm text-ink focus:border-crimson focus:bg-surface focus:outline-none focus:ring-2 focus:ring-crimson/20"
               />
             </div>
 
@@ -77,7 +77,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 autoComplete="current-password"
-                className="mt-2 block w-full border border-border-strong bg-canvas px-3 py-2.5 font-body text-sm text-ink focus:border-ink focus:bg-surface focus:outline-none"
+                className="mt-2 block w-full rounded-md border border-border-strong bg-canvas px-3 py-2.5 font-body text-sm text-ink focus:border-crimson focus:bg-surface focus:outline-none focus:ring-2 focus:ring-crimson/20"
               />
             </div>
 
@@ -90,7 +90,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-crimson py-3 font-body text-[11px] font-bold uppercase tracking-[2px] text-white transition-colors hover:bg-[#c62828] disabled:opacity-50"
+              className="w-full rounded-md bg-crimson py-3 font-body text-[11px] font-bold uppercase tracking-[2px] text-white shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:bg-[#c62828] hover:shadow-[var(--shadow-md)] disabled:opacity-50"
             >
               {loading ? "Entrando..." : "Entrar"}
             </button>
