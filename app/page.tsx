@@ -97,7 +97,7 @@ export default async function LandingPage() {
             <div className="mt-10 flex flex-wrap gap-4">
               <Link
                 href={appLink}
-                className="inline-block bg-crimson px-8 py-3.5 font-body text-[11px] font-bold uppercase tracking-[2px] text-white transition-colors hover:bg-[#c62828]"
+                className="inline-block rounded-md bg-crimson px-8 py-3.5 font-body text-[11px] font-bold uppercase tracking-[2px] text-white shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:bg-[#c62828] hover:shadow-[var(--shadow-md)]"
               >
                 Acessar o Sistema →
               </Link>
@@ -105,7 +105,7 @@ export default async function LandingPage() {
                 href="https://ttpfpoker.blogspot.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block border-2 border-ink px-8 py-3.5 font-body text-[11px] font-bold uppercase tracking-[2px] text-ink transition-all hover:bg-ink hover:text-canvas"
+                className="inline-block rounded-md border-2 border-ink px-8 py-3.5 font-body text-[11px] font-bold uppercase tracking-[2px] text-ink transition-all duration-150 hover:-translate-y-0.5 hover:bg-ink hover:text-canvas"
               >
                 Blog Histórico
               </a>
@@ -196,7 +196,7 @@ export default async function LandingPage() {
           ].map((card) => (
             <div
               key={card.title}
-              className="border border-border-strong bg-surface p-7 transition-colors hover:border-crimson/30"
+              className="rounded-lg border border-border-strong bg-surface p-7 shadow-[var(--shadow-sm)] transition-all duration-200 hover:-translate-y-1 hover:border-crimson/30 hover:shadow-[var(--shadow-md)]"
             >
               <span className="block font-body text-xl text-crimson" aria-hidden="true">
                 {card.icon}
@@ -324,7 +324,7 @@ export default async function LandingPage() {
             </p>
             <Link
               href={appLink}
-              className="mt-10 inline-block bg-crimson px-12 py-4 font-body text-[11px] font-bold uppercase tracking-[2px] text-white transition-colors hover:bg-[#c62828]"
+              className="mt-10 inline-block rounded-md bg-crimson px-12 py-4 font-body text-[11px] font-bold uppercase tracking-[2px] text-white shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:bg-[#c62828] hover:shadow-[var(--shadow-md)]"
             >
               Acessar o Sistema →
             </Link>

@@ -29,11 +29,11 @@ export default async function SeasonsPage() {
           {seasons.length > 0 ? `${seasons.length} temporada${seasons.length !== 1 ? "s" : ""}` : "Histórico"}
         </p>
         {seasons.length === 0 ? (
-          <div className="border border-border-strong bg-surface px-8 py-12 text-center">
+          <div className="rounded-xl border border-border-subtle bg-surface px-8 py-12 text-center">
             <p className="font-body text-sm text-muted">Nenhuma temporada criada ainda.</p>
           </div>
         ) : (
-          <div className="border border-border-strong bg-surface">
+          <div className="overflow-hidden rounded-xl border border-border-subtle bg-surface shadow-[var(--shadow-sm)]">
             <ul>
               {seasons.map((season, i) => (
                 <li
