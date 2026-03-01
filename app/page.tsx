@@ -147,7 +147,7 @@ export default async function LandingPage() {
                 num: `${totalPlayers > 0 ? totalPlayers : "15"}+`,
                 label: "Membros",
               },
-              { num: "Est. 2009", label: "Fundação" },
+              { num: "2009", label: "Fundação" },
             ].map((stat, i, arr) => (
               <div
                 key={stat.label}
