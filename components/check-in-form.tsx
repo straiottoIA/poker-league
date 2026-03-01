@@ -12,6 +12,16 @@ interface Player {
   name: string;
 }
 
+function getInitials(name: string): string {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .map((n) => n[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+}
+
 export function CheckInForm({
   seasonId,
   seasonName,
@@ -69,45 +79,54 @@ export function CheckInForm({
         </span>
       </div>
 
-      <div className="overflow-hidden border border-border-strong bg-surface">
-        <table className="min-w-full">
-          <thead>
-            <tr className="border-b border-border-strong bg-canvas">
-              <th className="px-5 py-3 text-left font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Jogador</th>
-              <th className="px-5 py-3 text-center font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {players.map((player) => {
-              const isCheckedIn = checkedIn.has(player.id);
-              const isLoading = loading === player.id;
-              return (
-                <tr key={player.id} className="border-b border-border-subtle transition-colors hover:bg-canvas/40">
-                  <td className="whitespace-nowrap px-5 py-3.5 font-body text-sm font-medium text-ink">
-                    {player.name}
-                  </td>
-                  <td className="px-5 py-3.5 text-center">
-                    {isCheckedIn ? (
-                      <span className="font-body text-[11px] font-bold uppercase tracking-[2px] text-crimson">
-                        ✓ Presente
-                      </span>
-                    ) : isLoggedIn ? (
-                      <button
-                        onClick={() => handleCheckIn(player.id)}
-                        disabled={isLoading}
-                        className="bg-ink px-4 py-1.5 font-body text-[10px] font-bold uppercase tracking-[2px] text-canvas transition-colors hover:bg-crimson disabled:opacity-50"
-                      >
-                        {isLoading ? "..." : "Check-in"}
-                      </button>
-                    ) : (
-                      <span className="font-body text-xs text-muted">–</span>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {players.map((player) => {
+          const isCheckedIn = checkedIn.has(player.id);
+          const isLoading = loading === player.id;
+          return (
+            <div
+              key={player.id}
+              className={`flex flex-col items-center gap-3 rounded-xl border p-4 text-center transition-colors ${
+                isCheckedIn
+                  ? "border-crimson/30 bg-tint-crimson"
+                  : "border-border-subtle bg-surface hover:border-crimson/20"
+              }`}
+            >
+              {/* Avatar */}
+              <div
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
+                  isCheckedIn ? "bg-crimson" : "bg-panel"
+                }`}
+              >
+                <span className="font-heading text-sm font-bold text-white">
+                  {getInitials(player.name)}
+                </span>
+              </div>
+
+              {/* Name */}
+              <p className="font-heading text-sm font-bold leading-tight text-ink">
+                {player.name}
+              </p>
+
+              {/* Status */}
+              {isCheckedIn ? (
+                <span className="font-body text-[10px] font-bold uppercase tracking-[2px] text-crimson">
+                  ✓ Presente
+                </span>
+              ) : isLoggedIn ? (
+                <button
+                  onClick={() => handleCheckIn(player.id)}
+                  disabled={isLoading}
+                  className="rounded-md bg-ink px-3 py-1.5 font-body text-[10px] font-bold uppercase tracking-[2px] text-canvas transition-all duration-150 hover:-translate-y-0.5 hover:bg-crimson disabled:opacity-50"
+                >
+                  {isLoading ? "..." : "Check-in"}
+                </button>
+              ) : (
+                <span className="font-body text-xs text-muted">–</span>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {error && (
