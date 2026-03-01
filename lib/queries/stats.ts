@@ -174,7 +174,7 @@ export async function getEstatisticasData(
         total_weeks: total_since_first,
         attendance_pct:
           acc.attended_count > 0 && total_since_first > 0
-            ? Math.round((acc.attended_count / total_since_first) * 100)
+            ? parseFloat(((acc.attended_count / total_since_first) * 100).toFixed(1))
             : null,
         seasons_played: acc.season_ids.size,
         season_wins: seasonWinsMap.get(pid) ?? 0,

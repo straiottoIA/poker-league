@@ -326,7 +326,7 @@ export function StatsContent({
                 {entry.weeks_attended}
               </td>
               <td className="px-4 py-3.5 text-right font-body text-sm text-muted">
-                {entry.attendance_pct !== null ? `${entry.attendance_pct}%` : "—"}
+                {entry.attendance_pct !== null ? `${entry.attendance_pct.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%` : "—"}
               </td>
               <td className="px-4 py-3.5 text-right font-body text-sm text-muted">
                 {entry.avg_points}
