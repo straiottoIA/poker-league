@@ -49,7 +49,7 @@ export function CheckInForm({
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   const router = useRouter();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, loading: authLoading } = useAuth();
 
   const handleCheckIn = async (playerId: string) => {
     setLoading(playerId);
@@ -58,6 +58,7 @@ export function CheckInForm({
       const supabase = createClient();
       await checkInPlayer(supabase, seasonId, playerId, weekNumber);
       setCheckedIn((prev) => new Set(prev).add(playerId));
+      setSaveSuccess(false);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao fazer check-in. Tente novamente.");
@@ -164,7 +165,7 @@ export function CheckInForm({
                   <span className="font-body text-[10px] font-bold uppercase tracking-[2px] text-crimson">
                     ✓ Presente
                   </span>
-                ) : isLoggedIn ? (
+                ) : !authLoading && isLoggedIn ? (
                   <button
                     onClick={() => handleCheckIn(player.id)}
                     disabled={isLoading}
@@ -185,7 +186,7 @@ export function CheckInForm({
             {error}
           </p>
         )}
-        {!isLoggedIn && (
+        {!authLoading && !isLoggedIn && (
           <p className="font-body text-sm text-secondary">
             <Link href="/login" className="font-bold text-ink underline hover:text-crimson">Faça login</Link>{" "}
             para registrar presenças.
@@ -194,7 +195,7 @@ export function CheckInForm({
       </div>
 
       {/* ── SECTION 2: Colocações ── */}
-      {isLoggedIn && checkedIn.size >= 1 && (
+      {!authLoading && isLoggedIn && checkedIn.size >= 1 && (
         <div className="space-y-4 border-t border-border-subtle pt-8">
           <div className="flex items-center gap-3">
             <span className="font-body text-[10px] font-bold text-crimson" aria-hidden="true">♠</span>
@@ -235,7 +236,7 @@ export function CheckInForm({
                         if (isNaN(val) || e.target.value === "") {
                           next.delete(player.id);
                         } else {
-                          next.set(player.id, val);
+                          next.set(player.id, Math.min(Math.max(val, 1), total));
                         }
                         return next;
                       });
