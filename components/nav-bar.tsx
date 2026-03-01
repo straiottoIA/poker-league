@@ -20,11 +20,18 @@ export function NavBar() {
   const router = useRouter();
   const { isLoggedIn } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   // Fecha o menu ao navegar
   useEffect(() => {
     setMenuOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const handleLogout = async () => {
     const supabase = createClient();
@@ -33,7 +40,7 @@ export function NavBar() {
   };
 
   return (
-    <nav className="border-b-2 border-ink bg-canvas">
+    <nav className={`sticky top-0 z-40 border-b border-border-strong bg-canvas/80 backdrop-blur-md transition-shadow duration-200 ${scrolled ? "shadow-[var(--shadow-md)]" : "shadow-none"}`}>
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         {/* Barra principal */}
         <div className="flex h-16 items-center gap-4">
@@ -51,8 +58,10 @@ export function NavBar() {
                   key={link.href}
                   href={link.href}
                   aria-current={isActive ? "page" : undefined}
-                  className={`font-body text-[11px] font-bold uppercase tracking-[2px] transition-colors ${
-                    isActive ? "text-crimson" : "text-ink hover:text-crimson"
+                  className={`relative font-body text-[11px] font-bold uppercase tracking-[2px] transition-colors ${
+                    isActive
+                      ? "text-crimson after:absolute after:bottom-[-1px] after:left-0 after:h-0.5 after:w-full after:bg-crimson"
+                      : "text-ink hover:text-crimson"
                   }`}
                 >
                   {link.label}
