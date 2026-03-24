@@ -1,6 +1,7 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Season, AllTimePlayerStat, SeasonSummary } from "@/lib/supabase/types";
 import { fromRoman } from "@/lib/queries/seasons";
+import { effectivePoints } from "@/lib/utils/points";
 
 async function fetchHallOfFame(supabase: SupabaseClient): Promise<{ champion: string }[]> {
   const { data, error } = await supabase.from("hall_of_fame").select("champion");
@@ -137,12 +138,6 @@ export async function getEstatisticasData(
         weekWinsMap.set(p.player_id, (weekWinsMap.get(p.player_id) ?? 0) + 1);
       }
     }
-  }
-
-  // Calcula pontuação efetiva descartando os 2 piores resultados (Pont_final)
-  function effectivePoints(weekPoints: number[]): number {
-    if (weekPoints.length <= 2) return weekPoints.reduce((a, b) => a + b, 0);
-    return [...weekPoints].sort((a, b) => a - b).slice(2).reduce((a, b) => a + b, 0);
   }
 
   // Pódios por temporada (usando descarte dos 2 piores)

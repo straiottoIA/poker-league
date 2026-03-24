@@ -1,4 +1,5 @@
 import { Player, Score } from "@/lib/supabase/types";
+import { effectivePoints } from "@/lib/utils/points";
 import Link from "next/link";
 
 interface SeasonGridProps {
@@ -20,6 +21,8 @@ export function SeasonGrid({
   }
 
   const weeks = Array.from({ length: numWeeks }, (_, i) => i + 1);
+  const ftWeek = numWeeks + 1;
+  const hasFinalTable = scores.some((s) => s.week_number === ftWeek);
 
   if (players.length === 0) {
     return (
@@ -53,6 +56,13 @@ export function SeasonGrid({
                 </Link>
               </th>
             ))}
+            {hasFinalTable && (
+              <th className="px-3 py-3 text-center font-body text-[10px] font-bold uppercase tracking-[2px] text-crimson">
+                <Link href={`/seasons/${seasonId}/week/${ftWeek}`} className="transition-colors hover:text-crimson/70">
+                  FT
+                </Link>
+              </th>
+            )}
             <th className="px-5 py-3 text-right font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
               Total
             </th>
@@ -60,13 +70,13 @@ export function SeasonGrid({
         </thead>
         <tbody>
           {players
-            .map((player) => ({
-              player,
-              total: weeks.reduce((sum, w) => {
-                const score = scoreMap.get(`${player.id}-${w}`);
-                return sum + (score ? Number(score.points) : 0);
-              }, 0),
-            }))
+            .map((player) => {
+              const attendedPoints = [...weeks, ...(hasFinalTable ? [ftWeek] : [])]
+                .map((w) => scoreMap.get(`${player.id}-${w}`))
+                .filter((s): s is Score => !!s && s.attended)
+                .map((s) => Number(s.points));
+              return { player, total: effectivePoints(attendedPoints) };
+            })
             .sort((a, b) => b.total - a.total)
             .map(({ player, total }, i) => (
               <tr
@@ -97,6 +107,14 @@ export function SeasonGrid({
                     </td>
                   );
                 })}
+                {hasFinalTable && (() => {
+                  const ftScore = scoreMap.get(`${player.id}-${ftWeek}`);
+                  return (
+                    <td key={ftWeek} className={`whitespace-nowrap px-3 py-2.5 text-center font-body text-sm ${ftScore ? ftScore.attended ? "font-bold text-crimson" : "text-secondary" : "text-muted/40"}`}>
+                      {ftScore ? +parseFloat(Number(ftScore.points).toFixed(2)) : "–"}
+                    </td>
+                  );
+                })()}
                 <td className="whitespace-nowrap px-5 py-2.5 text-right font-heading text-base font-bold text-ink">
                   {+parseFloat(total.toFixed(2))}
                 </td>

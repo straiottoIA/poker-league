@@ -10,18 +10,22 @@ export async function getCurrentWeek(
   seasonId: string,
   numWeeks: number
 ): Promise<number> {
+  // Only advance the week when scores have been saved (points > 0).
+  // Check-in rows (points = 0, attended = true) signal a game in progress,
+  // not a completed week — so we stay on the same week until scores are saved.
   const { data, error } = await supabase
     .from("scores")
     .select("week_number")
     .eq("season_id", seasonId)
+    .gt("points", 0)
     .order("week_number", { ascending: false })
     .limit(1);
   if (error) throw error;
 
   if (!data || data.length === 0) return 1;
-  const latestWeek = data[0].week_number as number;
+  const lastCompletedWeek = data[0].week_number as number;
   // Allow one extra week beyond numWeeks for the Final Table (Mesa Final)
-  return Math.min(latestWeek + 1, numWeeks + 1);
+  return Math.min(lastCompletedWeek + 1, numWeeks + 1);
 }
 
 export async function checkInPlayer(
@@ -39,6 +43,27 @@ export async function checkInPlayer(
         week_number: weekNumber,
         points: 0,
         attended: true,
+      },
+      { onConflict: "season_id,player_id,week_number" }
+    );
+  if (error) throw error;
+}
+
+export async function uncheckInPlayer(
+  supabase: SupabaseClient,
+  seasonId: string,
+  playerId: string,
+  weekNumber: number
+): Promise<void> {
+  const { error } = await supabase
+    .from("scores")
+    .upsert(
+      {
+        season_id: seasonId,
+        player_id: playerId,
+        week_number: weekNumber,
+        points: 0,
+        attended: false,
       },
       { onConflict: "season_id,player_id,week_number" }
     );

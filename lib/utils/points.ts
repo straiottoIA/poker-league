@@ -20,3 +20,12 @@ export function calculatePoints(position: number, totalPlayers: number): number 
   const K = totalPlayers * 2;
   return Math.round((K / (position + 1)) * 100) / 100;
 }
+
+/**
+ * Calculates effective season points by discarding the 2 worst weekly results.
+ * If a player has 2 or fewer results, all are kept (nothing to discard yet).
+ */
+export function effectivePoints(weekPoints: number[]): number {
+  if (weekPoints.length <= 2) return weekPoints.reduce((a, b) => a + b, 0);
+  return [...weekPoints].sort((a, b) => a - b).slice(2).reduce((a, b) => a + b, 0);
+}

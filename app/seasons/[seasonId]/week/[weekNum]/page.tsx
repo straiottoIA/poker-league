@@ -26,9 +26,11 @@ export default async function WeekPage({
     getWeekScores(supabase, seasonId, weekNumber),
   ]);
 
-  if (weekNumber > season.num_weeks) {
+  if (weekNumber > season.num_weeks + 1) {
     notFound();
   }
+
+  const isFinalTable = weekNumber === season.num_weeks + 1;
 
   const existingMap = new Map(
     existingScores.map((s) => [s.player_id, s])
@@ -45,7 +47,7 @@ export default async function WeekPage({
   });
 
   const prevWeek = weekNumber > 1 ? weekNumber - 1 : null;
-  const nextWeek = weekNumber < season.num_weeks ? weekNumber + 1 : null;
+  const nextWeek = weekNumber <= season.num_weeks ? weekNumber + 1 : null;
 
   return (
     <div className="space-y-10">
@@ -56,10 +58,10 @@ export default async function WeekPage({
             {season.name}
           </Link>
           <span>/</span>
-          <span className="text-ink">Semana {weekNumber}</span>
+          <span className="text-ink">{isFinalTable ? "Mesa Final" : `Semana ${weekNumber}`}</span>
         </div>
         <h1 className="mt-3 font-heading text-4xl font-bold text-ink">
-          Semana {weekNumber}
+          {isFinalTable ? "Mesa Final" : `Semana ${weekNumber}`}
         </h1>
         <p className="mt-2 font-body text-sm text-secondary">
           Registre presença e pontuação de cada jogador.
@@ -95,7 +97,7 @@ export default async function WeekPage({
             href={`/seasons/${seasonId}/week/${nextWeek}`}
             className="flex items-center gap-2 font-body text-[11px] font-bold uppercase tracking-[2px] text-secondary transition-colors hover:text-crimson"
           >
-            Semana {nextWeek} →
+            {nextWeek === season.num_weeks + 1 ? "Mesa Final →" : `Semana ${nextWeek} →`}
           </Link>
         ) : (
           <div />

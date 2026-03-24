@@ -13,7 +13,7 @@ export function fromRoman(s: string): number {
 }
 
 function sortSeasons<T extends Season>(seasons: T[]): T[] {
-  return seasons.sort((a, b) => {
+  return [...seasons].sort((a, b) => {
     if (a.is_active !== b.is_active) return a.is_active ? -1 : 1;
     return fromRoman(b.name) - fromRoman(a.name);
   });

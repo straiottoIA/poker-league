@@ -1,5 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Score, LeaderboardEntry, WeekScore } from "@/lib/supabase/types";
+import { effectivePoints } from "@/lib/utils/points";
 
 type RawScoreRow = {
   player_id: string;
@@ -68,17 +69,19 @@ export async function getLeaderboard(
 
   const playerMap = new Map<
     string,
-    { name: string; totalPoints: number; weeksAttended: number }
+    { name: string; weekPoints: number[]; weeksAttended: number }
   >();
 
   for (const row of data as unknown as RawScoreRow[]) {
     const existing = playerMap.get(row.player_id) ?? {
       name: extractPlayerName(row, "getLeaderboard"),
-      totalPoints: 0,
+      weekPoints: [],
       weeksAttended: 0,
     };
-    existing.totalPoints += row.points;
-    if (row.attended) existing.weeksAttended += 1;
+    if (row.attended) {
+      existing.weekPoints.push(row.points);
+      existing.weeksAttended += 1;
+    }
     playerMap.set(row.player_id, existing);
   }
 
@@ -86,7 +89,7 @@ export async function getLeaderboard(
     .map(([pid, info]) => ({
       player_id: pid,
       player_name: info.name,
-      total_points: info.totalPoints,
+      total_points: parseFloat(effectivePoints(info.weekPoints).toFixed(2)),
       weeks_attended: info.weeksAttended,
       rank: 0,
     }))

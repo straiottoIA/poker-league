@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { checkInPlayer } from "@/lib/queries/checkin";
+import { checkInPlayer, uncheckInPlayer } from "@/lib/queries/checkin";
 import { upsertScores } from "@/lib/queries/scores";
 import { calculatePoints } from "@/lib/utils/points";
 import { useRouter } from "next/navigation";
@@ -70,6 +70,31 @@ export function CheckInForm({
     }
   };
 
+  const handleUncheckIn = async (playerId: string) => {
+    setLoading(playerId);
+    setError("");
+    try {
+      const supabase = createClient();
+      await uncheckInPlayer(supabase, seasonId, playerId, weekNumber);
+      setCheckedIn((prev) => {
+        const next = new Set(prev);
+        next.delete(playerId);
+        return next;
+      });
+      setPlacements((prev) => {
+        const next = new Map(prev);
+        next.delete(playerId);
+        return next;
+      });
+      setSaveSuccess(false);
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao desfazer check-in. Tente novamente.");
+    } finally {
+      setLoading(null);
+    }
+  };
+
   const checkedInPlayers = players.filter((p) => checkedIn.has(p.id));
   const total = checkedInPlayers.length;
 
@@ -124,7 +149,7 @@ export function CheckInForm({
     );
   }
 
-  const checkedCount = checkedIn.size;
+  const checkedCount = checkedInPlayers.length;
 
   return (
     <div className="space-y-8">
@@ -165,9 +190,20 @@ export function CheckInForm({
                   {player.name}
                 </p>
                 {isCheckedIn ? (
-                  <span className="font-body text-[10px] font-bold uppercase tracking-[2px] text-crimson">
-                    ✓ Presente
-                  </span>
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="font-body text-[10px] font-bold uppercase tracking-[2px] text-crimson">
+                      ✓ Presente
+                    </span>
+                    {!authLoading && isLoggedIn && (
+                      <button
+                        onClick={() => handleUncheckIn(player.id)}
+                        disabled={isLoading}
+                        className="font-body text-[9px] font-bold uppercase tracking-[1px] text-muted transition-colors hover:text-crimson disabled:opacity-50"
+                      >
+                        {isLoading ? "..." : "desfazer"}
+                      </button>
+                    )}
+                  </div>
                 ) : !authLoading && isLoggedIn ? (
                   <button
                     onClick={() => handleCheckIn(player.id)}
