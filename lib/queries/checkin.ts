@@ -20,7 +20,8 @@ export async function getCurrentWeek(
 
   if (!data || data.length === 0) return 1;
   const latestWeek = data[0].week_number as number;
-  return Math.min(latestWeek + 1, numWeeks);
+  // Allow one extra week beyond numWeeks for the Final Table (Mesa Final)
+  return Math.min(latestWeek + 1, numWeeks + 1);
 }
 
 export async function checkInPlayer(

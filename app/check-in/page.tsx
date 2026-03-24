@@ -41,6 +41,7 @@ export default async function CheckInPage() {
         seasonId={season.id}
         seasonName={season.name}
         weekNumber={weekNumber}
+        numWeeks={season.num_weeks}
         players={players}
         checkedInPlayerIds={checkedIn.map((p) => p.player_id)}
       />

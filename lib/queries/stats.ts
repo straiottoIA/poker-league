@@ -74,7 +74,7 @@ export async function getEstatisticasData(
   };
   const playerAcc = new Map<string, PlayerAcc>();
 
-  type SeasonPlayerAcc = { player_id: string; name: string; points: number };
+  type SeasonPlayerAcc = { player_id: string; name: string; weekPoints: number[] };
   const seasonPlayerAcc = new Map<string, SeasonPlayerAcc>();
 
   // weekMap: slot → lista de { player_id, points } para calcular vitórias de etapa
@@ -100,8 +100,8 @@ export async function getEstatisticasData(
 
     // Season-player accumulator (para vitórias de temporada e pódios)
     const spKey = `${s.season_id}|${s.player_id}`;
-    const spExisting = seasonPlayerAcc.get(spKey) ?? { player_id: s.player_id, name, points: 0 };
-    spExisting.points += s.points;
+    const spExisting = seasonPlayerAcc.get(spKey) ?? { player_id: s.player_id, name, weekPoints: [] };
+    if (s.attended) spExisting.weekPoints.push(s.points);
     seasonPlayerAcc.set(spKey, spExisting);
 
     // Week accumulator (para vitórias de etapa)
@@ -122,6 +122,12 @@ export async function getEstatisticasData(
     }
   }
 
+  // Calcula pontuação efetiva descartando os 2 piores resultados (Pont_final)
+  function effectivePoints(weekPoints: number[]): number {
+    if (weekPoints.length <= 2) return weekPoints.reduce((a, b) => a + b, 0);
+    return [...weekPoints].sort((a, b) => a - b).slice(2).reduce((a, b) => a + b, 0);
+  }
+
   // Vitórias de temporada (season_wins) e pódios
   const seasonWinsMap = new Map<string, number>();
   const podiumsMap = new Map<string, number>();
@@ -135,18 +141,20 @@ export async function getEstatisticasData(
   }
 
   for (const [, players] of bySeason) {
-    const sorted = [...players].sort((a, b) => b.points - a.points);
-    const rank1pts = sorted[0]?.points ?? -1;
-    const rank3pts = sorted[2]?.points ?? -1;
+    const sorted = [...players]
+      .map((p) => ({ ...p, effPts: effectivePoints(p.weekPoints) }))
+      .sort((a, b) => b.effPts - a.effPts);
+    const rank1pts = sorted[0]?.effPts ?? -1;
+    const rank3pts = sorted[2]?.effPts ?? -1;
 
     for (const p of sorted) {
-      if (p.points > 0 && p.points === rank1pts) {
+      if (p.effPts > 0 && p.effPts === rank1pts) {
         seasonWinsMap.set(p.player_id, (seasonWinsMap.get(p.player_id) ?? 0) + 1);
       }
       const inPodium =
         sorted.length >= 3
-          ? p.points >= rank3pts && rank3pts > 0
-          : p.points > 0;
+          ? p.effPts >= rank3pts && rank3pts > 0
+          : p.effPts > 0;
       if (inPodium) {
         podiumsMap.set(p.player_id, (podiumsMap.get(p.player_id) ?? 0) + 1);
       }
@@ -194,19 +202,21 @@ export async function getEstatisticasData(
     const weeksSet = new Set(seasonScores.map((s) => s.week_number));
     const attended = seasonScores.filter((s) => s.attended);
 
-    const perPlayer = new Map<string, { name: string; points: number }>();
+    const perPlayer = new Map<string, { name: string; weekPoints: number[] }>();
     for (const s of seasonScores) {
+      if (!s.attended) continue;
       const name = s.players?.name ?? "?";
-      const cur = perPlayer.get(s.player_id) ?? { name, points: 0 };
-      cur.points += s.points;
+      const cur = perPlayer.get(s.player_id) ?? { name, weekPoints: [] };
+      cur.weekPoints.push(s.points);
       perPlayer.set(s.player_id, cur);
     }
 
     let topPlayer: string | null = null;
     let topPoints = 0;
     for (const [, info] of perPlayer) {
-      if (info.points > topPoints) {
-        topPoints = info.points;
+      const eff = effectivePoints(info.weekPoints);
+      if (eff > topPoints) {
+        topPoints = eff;
         topPlayer = info.name;
       }
     }
@@ -219,7 +229,7 @@ export async function getEstatisticasData(
       weeks_played: weeksSet.size,
       total_attendances: attended.length,
       top_player: topPlayer,
-      top_points: parseFloat(topPoints.toFixed(2)),
+      top_points: parseFloat(topPoints.toFixed(2)), // pontuação efetiva (descarte dos 2 piores)
     };
   });
 

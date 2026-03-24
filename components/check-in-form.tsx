@@ -28,15 +28,18 @@ export function CheckInForm({
   seasonId,
   seasonName,
   weekNumber,
+  numWeeks,
   players,
   checkedInPlayerIds,
 }: {
   seasonId: string;
   seasonName: string;
   weekNumber: number;
+  numWeeks: number;
   players: Player[];
   checkedInPlayerIds: string[];
 }) {
+  const isFinalTable = weekNumber === numWeeks + 1;
   const [checkedIn, setCheckedIn] = useState<Set<string>>(
     new Set(checkedInPlayerIds)
   );
@@ -129,7 +132,7 @@ export function CheckInForm({
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <p className="font-body text-sm text-secondary">
-            {seasonName} — Semana {weekNumber}
+            {seasonName} — {isFinalTable ? "Mesa Final" : `Semana ${weekNumber}`}
           </p>
           <span className="border border-border-strong px-3 py-1 font-body text-[10px] font-bold uppercase tracking-[2px] text-secondary">
             {checkedCount}/{players.length} presentes
@@ -200,7 +203,7 @@ export function CheckInForm({
           <div className="flex items-center gap-3">
             <span className="font-body text-[10px] font-bold text-crimson" aria-hidden="true">♠</span>
             <h2 className="font-heading text-xl font-bold text-ink">
-              Colocações — Semana {weekNumber}
+              Colocações — {isFinalTable ? "Mesa Final" : `Semana ${weekNumber}`}
             </h2>
           </div>
           <p className="font-body text-sm text-secondary">
