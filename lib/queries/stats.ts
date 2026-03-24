@@ -2,6 +2,12 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import { Season, AllTimePlayerStat, SeasonSummary } from "@/lib/supabase/types";
 import { fromRoman } from "@/lib/queries/seasons";
 
+async function fetchHallOfFame(supabase: SupabaseClient): Promise<{ champion: string }[]> {
+  const { data, error } = await supabase.from("hall_of_fame").select("champion");
+  if (error) throw error;
+  return data ?? [];
+}
+
 type RawScore = {
   player_id: string;
   season_id: string;
@@ -40,7 +46,18 @@ export async function getEstatisticasData(
   supabase: SupabaseClient,
   seasons: Season[]
 ): Promise<EstatisticasData> {
-  const scores = await fetchAllScores(supabase);
+  const [scores, hallOfFame] = await Promise.all([
+    fetchAllScores(supabase),
+    fetchHallOfFame(supabase),
+  ]);
+
+  // season_wins por nome de jogador, fonte: hall_of_fame (autoridade sobre vencedores históricos)
+  const seasonWinsByName = new Map<string, number>();
+  for (const entry of hallOfFame) {
+    if (entry.champion) {
+      seasonWinsByName.set(entry.champion, (seasonWinsByName.get(entry.champion) ?? 0) + 1);
+    }
+  }
 
   // Ordenar temporadas cronologicamente (mais antiga primeiro) para o cálculo de attendance_pct.
   // getSeasons retorna decrescente (ativa primeiro), então reordenamos aqui.
@@ -128,8 +145,7 @@ export async function getEstatisticasData(
     return [...weekPoints].sort((a, b) => a - b).slice(2).reduce((a, b) => a + b, 0);
   }
 
-  // Vitórias de temporada (season_wins) e pódios
-  const seasonWinsMap = new Map<string, number>();
+  // Pódios por temporada (usando descarte dos 2 piores)
   const podiumsMap = new Map<string, number>();
 
   const bySeason = new Map<string, SeasonPlayerAcc[]>();
@@ -144,13 +160,9 @@ export async function getEstatisticasData(
     const sorted = [...players]
       .map((p) => ({ ...p, effPts: effectivePoints(p.weekPoints) }))
       .sort((a, b) => b.effPts - a.effPts);
-    const rank1pts = sorted[0]?.effPts ?? -1;
     const rank3pts = sorted[2]?.effPts ?? -1;
 
     for (const p of sorted) {
-      if (p.effPts > 0 && p.effPts === rank1pts) {
-        seasonWinsMap.set(p.player_id, (seasonWinsMap.get(p.player_id) ?? 0) + 1);
-      }
       const inPodium =
         sorted.length >= 3
           ? p.effPts >= rank3pts && rank3pts > 0
@@ -185,7 +197,7 @@ export async function getEstatisticasData(
             ? parseFloat(((acc.attended_count / total_since_first) * 100).toFixed(1))
             : null,
         seasons_played: acc.season_ids.size,
-        season_wins: seasonWinsMap.get(pid) ?? 0,
+        season_wins: seasonWinsByName.get(acc.name) ?? 0,
         week_wins: weekWinsMap.get(pid) ?? 0,
         podiums: podiumsMap.get(pid) ?? 0,
         avg_points:
