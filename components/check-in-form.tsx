@@ -46,6 +46,7 @@ export function CheckInForm({
   const [checkedIn, setCheckedIn] = useState<Set<string>>(new Set(checkedInPlayerIds));
   const [rankedPlayers, setRankedPlayers] = useState<string[]>(checkedInPlayerIds);
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const [error, setError] = useState("");
   const [savingScores, setSavingScores] = useState(false);
   const [saveError, setSaveError] = useState("");
@@ -174,6 +175,14 @@ export function CheckInForm({
   const totalSessions = numWeeks + 1;
   const progressPct = Math.round((weekNumber / totalSessions) * 100);
 
+  const searchResults = searchTerm.trim().length >= 1
+    ? players.filter(
+        (p) =>
+          !checkedIn.has(p.id) &&
+          p.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
+      )
+    : [];
+
   return (
     <div className="space-y-8">
       {/* ── PROGRESS BAR ── */}
@@ -190,6 +199,48 @@ export function CheckInForm({
             style={{ width: `${progressPct}%` }}
           />
         </div>
+      </div>
+
+      {/* ── SEARCH BAR ── */}
+      <div className="relative">
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Buscar seu nome para fazer check-in..."
+          autoComplete="off"
+          className="w-full border border-border-strong bg-surface px-4 py-3 font-body text-sm text-ink placeholder:text-muted focus:border-crimson focus:outline-none focus:ring-2 focus:ring-crimson/20"
+        />
+        {searchResults.length > 0 && (
+          <div className="absolute left-0 right-0 top-full z-20 border border-t-0 border-border-strong bg-surface shadow-[var(--shadow-md)]">
+            {searchResults.map((player) => (
+              <button
+                key={player.id}
+                onClick={() => {
+                  handleCheckIn(player.id);
+                  setSearchTerm("");
+                }}
+                disabled={loadingId === player.id}
+                className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-canvas disabled:opacity-50"
+              >
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-panel">
+                  <span className="font-heading text-xs font-bold text-white">
+                    {getInitials(player.name)}
+                  </span>
+                </div>
+                <span className="font-body text-sm font-medium text-ink">{player.name}</span>
+                <span className="ml-auto font-body text-[10px] font-bold uppercase tracking-[2px] text-crimson">
+                  {loadingId === player.id ? "..." : "Check-in →"}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+        {searchTerm.trim().length >= 1 && searchResults.length === 0 && (
+          <div className="absolute left-0 right-0 top-full z-20 border border-t-0 border-border-strong bg-surface px-4 py-3 shadow-[var(--shadow-md)]">
+            <p className="font-body text-sm text-muted">Nenhum jogador encontrado.</p>
+          </div>
+        )}
       </div>
 
       {/* ── SECTION 1: Check-in ── */}
