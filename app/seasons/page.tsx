@@ -50,7 +50,7 @@ export default async function SeasonsPage() {
                   </Link>
                   <div className="flex items-center gap-4">
                     <span className="font-body text-[11px] text-muted">
-                      {season.player_count} jogadores · {season.num_weeks} semanas
+                      {season.player_count} jogadores · {season.num_weeks} sem. + Mesa Final
                     </span>
                     {season.is_active && (
                       <span className="bg-crimson px-2 py-0.5 font-body text-[10px] font-bold uppercase tracking-[2px] text-white">

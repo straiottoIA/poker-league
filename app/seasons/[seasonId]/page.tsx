@@ -42,7 +42,7 @@ export default async function SeasonDashboard({
               {season.name}
             </h1>
             <p className="mt-3 font-body text-sm text-white/40">
-              {season.num_weeks} semanas
+              {season.num_weeks} semanas + Mesa Final
               {season.is_active && (
                 <span className="ml-3 border border-crimson/40 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[2px] text-crimson">
                   Ativa

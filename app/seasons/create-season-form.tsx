@@ -56,7 +56,8 @@ export function CreateSeasonForm() {
         onChange={(e) => setNumWeeks(Number(e.target.value) || 10)}
         min={1}
         max={52}
-        aria-label="Número de semanas"
+        title="Semanas regulares (Mesa Final é adicionada automaticamente)"
+        aria-label="Semanas regulares"
         className="w-20 border border-border-strong bg-surface px-3 py-2.5 text-center font-body text-sm text-ink focus:border-ink focus:outline-none"
       />
       <button
