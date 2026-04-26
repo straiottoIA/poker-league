@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,12 +19,12 @@ export default function LoginPage() {
     try {
       const supabase = createClient();
       const { error } = await supabase.auth.signInWithPassword({
-        email,
+        email: `${username.trim().toLowerCase()}@ttpf.local`,
         password,
       });
 
       if (error) {
-        setError(error.message);
+        setError("Usuário ou senha incorretos.");
         return;
       }
 
@@ -52,16 +52,17 @@ export default function LoginPage() {
         <div className="rounded-2xl bg-surface px-8 py-10 shadow-[var(--shadow-lg)]">
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
-                E-mail
+              <label htmlFor="username" className="block font-body text-[10px] font-bold uppercase tracking-[2px] text-muted">
+                Usuário
               </label>
               <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
-                autoComplete="email"
+                autoComplete="username"
+                autoCapitalize="none"
                 className="mt-2 block w-full rounded-md border border-border-strong bg-canvas px-3 py-2.5 font-body text-sm text-ink focus:border-crimson focus:bg-surface focus:outline-none focus:ring-2 focus:ring-crimson/20"
               />
             </div>

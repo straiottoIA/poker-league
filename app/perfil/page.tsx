@@ -148,7 +148,11 @@ export default function PerfilPage() {
 
   if (!user) return null;
 
-  const initials = user.email?.charAt(0).toUpperCase() ?? "?";
+  const displayName =
+    (user.user_metadata?.username as string | undefined) ??
+    user.email?.replace("@ttpf.local", "") ??
+    "?";
+  const initials = displayName.charAt(0).toUpperCase();
   const memberSince = new Date(user.created_at).toLocaleDateString("pt-BR", {
     day: "2-digit",
     month: "long",
@@ -182,7 +186,7 @@ export default function PerfilPage() {
             <p className="font-body text-[10px] font-bold uppercase tracking-[3px] text-crimson">
               Administrador
             </p>
-            <h1 className="mt-1 font-heading text-2xl font-bold text-ink">{user.email}</h1>
+            <h1 className="mt-1 font-heading text-2xl font-bold text-ink capitalize">{displayName}</h1>
           </div>
         </div>
       </div>
@@ -210,7 +214,7 @@ export default function PerfilPage() {
       {activeTab === "resumo" && (
         <div className="border border-border-strong bg-surface p-8">
           <div className="space-y-6">
-            <InfoRow label="E-mail" value={user.email ?? "—"} />
+            <InfoRow label="Usuário" value={displayName} />
             <InfoRow label="Função" value="Administrador" />
             <InfoRow label="Membro desde" value={memberSince} />
             <InfoRow label="Último acesso" value={lastLogin} />
