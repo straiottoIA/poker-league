@@ -248,39 +248,40 @@ export function CheckInForm({
         )}
       </div>
 
-      {/* ── SECTION 1: Check-in ── */}
+      {/* ── PRESENTES ── */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <p className="font-body text-sm text-secondary">
             {seasonName} — {isFinalTable ? "Mesa Final" : `Semana ${weekNumber}`}
           </p>
-          <span className="border border-border-strong px-3 py-1 font-body text-[10px] font-bold uppercase tracking-[2px] text-secondary">
-            {checkedCount}/{players.length} presentes
-          </span>
+          {checkedCount > 0 && (
+            <span className="border border-border-strong px-3 py-1 font-body text-[10px] font-bold uppercase tracking-[2px] text-secondary">
+              {checkedCount} presentes
+            </span>
+          )}
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {players.map((player) => {
-            const isCheckedIn = checkedIn.has(player.id);
-            const isLoading = loadingId === player.id;
-            return (
-              <div
-                key={player.id}
-                className={`flex flex-col items-center gap-3 rounded-xl border p-4 text-center transition-colors ${
-                  isCheckedIn
-                    ? "border-crimson/30 bg-tint-crimson"
-                    : "border-border-subtle bg-surface hover:border-crimson/20"
-                }`}
-              >
-                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${isCheckedIn ? "bg-crimson" : "bg-panel"}`}>
-                  <span className="font-heading text-sm font-bold text-white">
-                    {getInitials(player.name)}
-                  </span>
-                </div>
-                <p className="font-heading text-sm font-bold leading-tight text-ink">
-                  {player.name}
-                </p>
-                {isCheckedIn ? (
+        {checkedCount === 0 ? (
+          <div className="border border-border-subtle bg-surface px-6 py-8 text-center">
+            <p className="font-body text-sm text-muted">Nenhum check-in ainda. Use a busca acima.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {players
+              .filter((p) => checkedIn.has(p.id))
+              .map((player) => (
+                <div
+                  key={player.id}
+                  className="flex flex-col items-center gap-3 rounded-xl border border-crimson/30 bg-tint-crimson p-4 text-center"
+                >
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-crimson">
+                    <span className="font-heading text-sm font-bold text-white">
+                      {getInitials(player.name)}
+                    </span>
+                  </div>
+                  <p className="font-heading text-sm font-bold leading-tight text-ink">
+                    {player.name}
+                  </p>
                   <div className="flex flex-col items-center gap-1">
                     <span className="font-body text-[10px] font-bold uppercase tracking-[2px] text-crimson">
                       ✓ Presente
@@ -288,40 +289,21 @@ export function CheckInForm({
                     {!authLoading && isLoggedIn && (
                       <button
                         onClick={() => handleUncheckIn(player.id)}
-                        disabled={isLoading}
+                        disabled={loadingId === player.id}
                         className="font-body text-[9px] font-bold uppercase tracking-[1px] text-muted transition-colors hover:text-crimson disabled:opacity-50"
                       >
-                        {isLoading ? "..." : "desfazer"}
+                        {loadingId === player.id ? "..." : "desfazer"}
                       </button>
                     )}
                   </div>
-                ) : !authLoading && isLoggedIn ? (
-                  <button
-                    onClick={() => handleCheckIn(player.id)}
-                    disabled={isLoading}
-                    className="rounded-md bg-ink px-3 py-1.5 font-body text-[10px] font-bold uppercase tracking-[2px] text-canvas transition-all duration-150 hover:-translate-y-0.5 hover:bg-crimson disabled:opacity-50"
-                  >
-                    {isLoading ? "..." : "Check-in"}
-                  </button>
-                ) : (
-                  <span className="font-body text-[10px] font-bold uppercase tracking-[1px] text-muted">
-                    {isCheckedIn ? "Presente" : "Ausente"}
-                  </span>
-                )}
-              </div>
-            );
-          })}
-        </div>
+                </div>
+              ))}
+          </div>
+        )}
 
         {error && (
           <p className="border border-crimson/20 bg-tint-crimson px-4 py-2.5 font-body text-sm text-crimson">
             {error}
-          </p>
-        )}
-        {!authLoading && !isLoggedIn && (
-          <p className="font-body text-sm text-secondary">
-            <Link href="/login" className="font-bold text-ink underline hover:text-crimson">Faça login</Link>{" "}
-            para registrar presenças.
           </p>
         )}
       </div>
