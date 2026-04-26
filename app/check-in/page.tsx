@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getActiveSeason } from "@/lib/queries/seasons";
-import { getSeasonPlayers } from "@/lib/queries/roster";
 import { getCurrentWeek, getCheckedInPlayers } from "@/lib/queries/checkin";
+import { getPlayers } from "@/lib/queries/players";
 import { CheckInForm } from "@/components/check-in-form";
 
 export default async function CheckInPage() {
@@ -24,7 +24,7 @@ export default async function CheckInPage() {
 
   const weekNumber = await getCurrentWeek(supabase, season.id, season.num_weeks);
   const [players, checkedIn] = await Promise.all([
-    getSeasonPlayers(supabase, season.id),
+    getPlayers(supabase),
     getCheckedInPlayers(supabase, season.id, weekNumber),
   ]);
 

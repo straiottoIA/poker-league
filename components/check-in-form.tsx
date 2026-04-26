@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { checkInPlayer, uncheckInPlayer } from "@/lib/queries/checkin";
 import { upsertScores } from "@/lib/queries/scores";
+import { enrollPlayersBulk } from "@/lib/queries/roster";
 import { calculatePoints } from "@/lib/utils/points";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/supabase/use-auth";
@@ -154,6 +155,10 @@ export function CheckInForm({
         };
       });
       await upsertScores(supabase, seasonId, weekNumber, scores);
+
+      const attendedIds = scores.filter((s) => s.attended).map((s) => s.player_id);
+      await enrollPlayersBulk(supabase, seasonId, attendedIds);
+
       setSaveSuccess(true);
       router.refresh();
     } catch (err) {

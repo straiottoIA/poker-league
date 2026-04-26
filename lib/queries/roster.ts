@@ -59,3 +59,16 @@ export async function unenrollPlayer(
     .eq("player_id", playerId);
   if (error) throw error;
 }
+
+export async function enrollPlayersBulk(
+  supabase: SupabaseClient,
+  seasonId: string,
+  playerIds: string[]
+): Promise<void> {
+  if (playerIds.length === 0) return;
+  const rows = playerIds.map((playerId) => ({ season_id: seasonId, player_id: playerId }));
+  const { error } = await supabase
+    .from("season_players")
+    .upsert(rows, { onConflict: "season_id,player_id", ignoreDuplicates: true });
+  if (error) throw error;
+}
