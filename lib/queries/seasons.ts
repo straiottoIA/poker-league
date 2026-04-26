@@ -1,16 +1,8 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Season, SeasonWithCount } from "@/lib/supabase/types";
+import { fromRoman } from "@/lib/utils/roman";
 
-export function fromRoman(s: string): number {
-  const vals: Record<string, number> = { I:1,V:5,X:10,L:50,C:100,D:500,M:1000 };
-  let n = 0;
-  for (let i = 0; i < s.length; i++) {
-    const cur = vals[s[i]] ?? 0;
-    const nxt = vals[s[i+1]] ?? 0;
-    n += cur < nxt ? -cur : cur;
-  }
-  return n;
-}
+export { fromRoman };
 
 function sortSeasons<T extends Season>(seasons: T[]): T[] {
   return [...seasons].sort((a, b) => {

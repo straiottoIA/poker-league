@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { upsertScores } from "@/lib/queries/scores";
+import { createSeason } from "@/lib/queries/seasons";
+import { fromRoman, toRoman } from "@/lib/utils/roman";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/supabase/use-auth";
 import Link from "next/link";
@@ -17,10 +19,14 @@ interface PlayerScore {
 export function AttendanceScoreForm({
   seasonId,
   weekNumber,
+  numWeeks,
+  seasonName,
   initialScores,
 }: {
   seasonId: string;
   weekNumber: number;
+  numWeeks: number;
+  seasonName: string;
   initialScores: PlayerScore[];
 }) {
   const [scores, setScores] = useState<PlayerScore[]>(initialScores);
@@ -58,6 +64,19 @@ export function AttendanceScoreForm({
           attended: s.attended,
         }))
       );
+
+      const isFinalTable = weekNumber === numWeeks + 1;
+      if (isFinalTable) {
+        const currentNum = fromRoman(seasonName);
+        if (currentNum > 0) {
+          const nextName = toRoman(currentNum + 1);
+          const newSeason = await createSeason(supabase, nextName, numWeeks);
+          setMessage(`Mesa Final salva! Temporada ${nextName} criada automaticamente.`);
+          setTimeout(() => router.push(`/seasons/${newSeason.id}`), 2500);
+          return;
+        }
+      }
+
       setMessage("Salvo com sucesso.");
       router.refresh();
     } catch (err) {

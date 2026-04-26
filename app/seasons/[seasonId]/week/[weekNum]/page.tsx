@@ -71,6 +71,8 @@ export default async function WeekPage({
       <AttendanceScoreForm
         seasonId={seasonId}
         weekNumber={weekNumber}
+        numWeeks={season.num_weeks}
+        seasonName={season.name}
         initialScores={initialScores}
       />
 
